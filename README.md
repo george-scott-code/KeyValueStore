@@ -8,8 +8,12 @@ Goals:
 
 Roadmap:
 
-C#:
-- Sequential write text file storage
+- Sequential write CSV text file storage
+- Encoded storage in bytes
 - Hash Map Index
 - Segmentation
-- Encoded storage
+- deletion
+- crash recovery
+- concurrency
+
+- SST tables
