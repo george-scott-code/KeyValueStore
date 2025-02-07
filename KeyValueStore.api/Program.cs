@@ -1,26 +1,41 @@
-var builder = WebApplication.CreateBuilder(args);
+using KeyValueStore.api.Store;
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+internal class Program
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    private static void Main(string[] args)
+    {
+        var builder = WebApplication.CreateBuilder(args);
+
+        // Add services to the container.
+        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
+
+        var app = builder.Build();
+
+        // Configure the HTTP request pipeline.
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
+
+        app.UseHttpsRedirection();
+
+        app.MapGet("/value", () =>
+        {
+            return Store.Get("Hello");
+        })
+        .WithName("GetValue")
+        .WithOpenApi();
+
+        app.MapPost("/value", () =>
+        {
+            Store.Set("Hello", "World");
+        })
+        .WithName("PostValue")
+        .WithOpenApi();
+
+        app.Run();
+    }
 }
-
-app.UseHttpsRedirection();
-
-app.MapGet("/value", () =>
-{
-    return "Hello World!";
-})
-.WithName("GetValue")
-.WithOpenApi();
-
-app.Run();
