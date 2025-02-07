@@ -16,6 +16,7 @@ public static class Store
 
     public static string Get(string key)
     {
-        return _store[key];
+        _store.TryGetValue(key, out var value);
+        return value is null ? string.Empty : value;
     }
 }
