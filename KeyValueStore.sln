@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyValueStore", "KeyValueStore.api\KeyValueStore.api.csproj", "{0918ABF9-A6F8-4D69-AC38-897201C2F794}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyValueStore.test", "KeyValueStore.test\KeyValueStore.test.csproj", "{A91695ED-4058-42D8-896F-6D5121A126DE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{0918ABF9-A6F8-4D69-AC38-897201C2F794}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0918ABF9-A6F8-4D69-AC38-897201C2F794}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0918ABF9-A6F8-4D69-AC38-897201C2F794}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A91695ED-4058-42D8-896F-6D5121A126DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A91695ED-4058-42D8-896F-6D5121A126DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A91695ED-4058-42D8-896F-6D5121A126DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A91695ED-4058-42D8-896F-6D5121A126DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
