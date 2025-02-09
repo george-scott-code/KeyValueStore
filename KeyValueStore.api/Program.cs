@@ -22,16 +22,18 @@ internal class Program
 
         app.UseHttpsRedirection();
 
+        var store = new InMemoryStore();
+
         app.MapGet("/value", () =>
         {
-            return Store.Get("Hello");
+            return store.Get("Hello");
         })
         .WithName("GetValue")
         .WithOpenApi();
 
         app.MapPost("/value", () =>
         {
-            Store.Set("Hello", "World");
+            store.Set("Hello", "World");
         })
         .WithName("PostValue")
         .WithOpenApi();
