@@ -17,6 +17,7 @@ public class TextStore : IKeyValueStore
         using StreamReader sw = new StreamReader(fs);
 
         string? line;
+        // todo: we should be looking for the last occurance
         while ((line = sw.ReadLine()) != null)
         {
             var parts = line.Split(" ");
@@ -30,16 +31,17 @@ public class TextStore : IKeyValueStore
 
     public void Set(string key, string value)
     {
+        // todo: sanitize string
         string dbPath = "D:\\source\\KeyValueStore\\db.txt";
         FileStream fileStream = File.Open(dbPath, FileMode.Open);
 
         fileStream.SetLength(0);
         fileStream.Close();
 
-
         using FileStream fs = new(dbPath, FileMode.Append);
         using StreamWriter sw = new(fs);
 
+        // todo: write, format, csv
         sw.WriteLine($"{key} {value}");
     }
 }
