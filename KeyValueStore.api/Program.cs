@@ -24,16 +24,16 @@ internal class Program
 
         var store = new InMemoryStore();
 
-        app.MapGet("/value", () =>
+        app.MapGet("/value", (string key) =>
         {
-            return store.Get("Hello");
+            return store.Get(key);
         })
         .WithName("GetValue")
         .WithOpenApi();
 
-        app.MapPost("/value", () =>
+        app.MapPost("/value", (string key, string value) =>
         {
-            store.Set("Hello", "World");
+            store.Set(key, value);
         })
         .WithName("PostValue")
         .WithOpenApi();

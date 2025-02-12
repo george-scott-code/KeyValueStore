@@ -1,5 +1,3 @@
-using Microsoft.VisualBasic;
-
 namespace KeyValueStore.api.Store;
 
 public class TextStore : IKeyValueStore
@@ -18,7 +16,7 @@ public class TextStore : IKeyValueStore
 
         string? value = null;
         string? line;
-        
+
         // todo: parses whole file to match last occurance, consider reading the file in reverse when switching to a binary format
         while ((line = sw.ReadLine()) != null)
         {
