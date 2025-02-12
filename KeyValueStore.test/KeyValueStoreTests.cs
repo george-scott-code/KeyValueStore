@@ -8,12 +8,6 @@ public class KeyValueStoreTests
     [Fact]
     public void Test1()
     {
-        string dbPath = "D:\\source\\KeyValueStore\\db.txt";
-        FileStream fileStream = File.Open(dbPath, FileMode.Open);
-
-        fileStream.SetLength(0);
-        fileStream.Close();
-
         var store = new InMemoryStore();
 
         store.Set("Hello", "World");
@@ -25,12 +19,6 @@ public class KeyValueStoreTests
     [Fact]
     public void Test2()
     {
-        string dbPath = "D:\\source\\KeyValueStore\\db.txt";
-        FileStream fileStream = File.Open(dbPath, FileMode.Open);
-
-        fileStream.SetLength(0);
-        fileStream.Close();
-
         var store = new TextStore();
 
         store.Set("Hello", "World");
@@ -42,12 +30,6 @@ public class KeyValueStoreTests
     [Fact]
     public void WhenTheSameKeyHasBeenSetTwice_ReturnTheLatestValue()
     {
-        string dbPath = "D:\\source\\KeyValueStore\\db.txt";
-        FileStream fileStream = File.Open(dbPath, FileMode.Open);
-
-        fileStream.SetLength(0);
-        fileStream.Close();
-
         var store = new TextStore();
 
         store.Set("Hello", "World");

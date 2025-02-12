@@ -22,7 +22,7 @@ internal class Program
 
         app.UseHttpsRedirection();
 
-        var store = new InMemoryStore();
+        var store = new IndexedTextStore();
 
         app.MapGet("/value", (string key) =>
         {
