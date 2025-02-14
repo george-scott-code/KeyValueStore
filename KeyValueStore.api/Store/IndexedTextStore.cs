@@ -4,7 +4,7 @@ namespace KeyValueStore.api.Store;
 
 public class IndexedTextStore : IKeyValueStore
 {
-    private static readonly Hashtable index;
+    private static readonly Dictionary<string, long> index;
 
     static IndexedTextStore()
     {
@@ -22,7 +22,7 @@ public class IndexedTextStore : IKeyValueStore
         // todo can we store as value types, not objects?
         // todo null checking
         // todo tests
-        var offset = (Int64) index[key];
+        var offset = index[key];
         string dbPath = "D:\\source\\KeyValueStore\\db.txt";
 
         using FileStream fs = new(dbPath, FileMode.Open, FileAccess.Read);
@@ -30,7 +30,9 @@ public class IndexedTextStore : IKeyValueStore
         using StreamReader sw = new StreamReader(fs);
 
         string? value = null;
-        string? line = sw.ReadLine();// sw.ReadLine();
+        string? line = sw.ReadLine();
+        
+        // todo: null
         string[] parts = line.Split(',');
         if (parts[0] == key)
         {
