@@ -5,7 +5,7 @@ public class TextStore : IKeyValueStore
 
     static TextStore()
     {
-        string dbPath = "D:\\source\\KeyValueStore\\db.txt";
+        string dbPath = "D:\\source\\KeyValueStore\\db2.txt";
         FileStream fileStream = File.Open(dbPath, FileMode.Open);
 
         fileStream.SetLength(0);
@@ -14,7 +14,7 @@ public class TextStore : IKeyValueStore
 
     public string? Get(string key)
     {
-        string dbPath = "D:\\source\\KeyValueStore\\db.txt";
+        string dbPath = "D:\\source\\KeyValueStore\\db2.txt";
 
         using FileStream fs = new(dbPath, FileMode.Open, FileAccess.Read);
         using StreamReader sw = new StreamReader(fs);
@@ -38,7 +38,7 @@ public class TextStore : IKeyValueStore
     public void Set(string key, string value)
     {
         // todo: sanitize string
-        string dbPath = "D:\\source\\KeyValueStore\\db.txt";
+        string dbPath = "D:\\source\\KeyValueStore\\db2.txt";
 
         using FileStream fs = new(dbPath, FileMode.Append);
         using StreamWriter sw = new(fs);
