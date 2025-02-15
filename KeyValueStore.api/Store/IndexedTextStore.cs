@@ -1,5 +1,3 @@
-using System.Collections;
-
 namespace KeyValueStore.api.Store;
 
 public class IndexedTextStore : IKeyValueStore
@@ -19,10 +17,11 @@ public class IndexedTextStore : IKeyValueStore
 
     public string? Get(string key)
     {
-        // todo can we store as value types, not objects?
-        // todo null checking
-        // todo tests
-        var offset = index[key];
+        if(!index.TryGetValue(key, out long offset))
+        {
+            return null;
+        }
+
         string dbPath = "D:\\source\\KeyValueStore\\db.txt";
 
         using FileStream fs = new(dbPath, FileMode.Open, FileAccess.Read);
@@ -31,7 +30,7 @@ public class IndexedTextStore : IKeyValueStore
 
         string? value = null;
         string? line = sw.ReadLine();
-        
+
         // todo: null
         string[] parts = line.Split(',');
         if (parts[0] == key)
