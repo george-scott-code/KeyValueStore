@@ -30,7 +30,7 @@ public class IndexedTextStoreTests
         var store = new IndexedTextStore();
         store.Set("foo", string.Empty);
 
-        var result = store.Get("Goodbye");
+        var result = store.Get("foo");
         Assert.Equal(string.Empty, result);
     }
 
@@ -46,4 +46,15 @@ public class IndexedTextStoreTests
         var result = store.Get("Hello");
         Assert.Equal("Dog", result);
     }
+
+    [Fact]
+    public void WhenTheKeyHasBeenSetToAValueWithAComma()
+    {
+        var store = new IndexedTextStore();
+        store.Set("foo", "Good,bye");
+
+        var result = store.Get("foo");
+        Assert.Equal("Good,bye", result);
+    }
+
 }
