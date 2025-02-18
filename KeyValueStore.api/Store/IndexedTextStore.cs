@@ -2,7 +2,7 @@ namespace KeyValueStore.api.Store;
 
 public class IndexedTextStore : IKeyValueStore
 {
-    private static readonly Dictionary<string, long> index;
+    private static readonly Dictionary<string, ByteData> index;
 
     static IndexedTextStore()
     {
@@ -17,7 +17,7 @@ public class IndexedTextStore : IKeyValueStore
 
     public string? Get(string key)
     {
-        if(!index.TryGetValue(key, out long offset))
+        if(!index.TryGetValue(key, out ByteData? byteData))
         {
             return null;
         }
@@ -25,14 +25,16 @@ public class IndexedTextStore : IKeyValueStore
         string dbPath = "D:\\source\\KeyValueStore\\db.txt";
 
         using FileStream fs = new(dbPath, FileMode.Open, FileAccess.Read);
-        fs.Seek(offset, SeekOrigin.Begin);
-        using StreamReader sw = new StreamReader(fs);
+        fs.Seek(byteData.Offset, SeekOrigin.Begin);
+        System.Console.WriteLine(fs.Position);
+        var byteBufffer = new byte[byteData.Length];
+        fs.ReadExactly(byteBufffer, 0, byteData.Length);
 
-        string? value = null;
-        string? line = sw.ReadLine();
+        var kvpString = System.Text.Encoding.UTF8.GetString(byteBufffer);
 
         // todo: null
-        string[] parts = line.Split(',');
+        string[] parts = kvpString.Split(',');
+        string value = string.Empty;
         if (parts[0] == key)
         {
             value = parts[1];
@@ -47,12 +49,17 @@ public class IndexedTextStore : IKeyValueStore
         string dbPath = "D:\\source\\KeyValueStore\\db.txt";
 
         using FileStream fs = new(dbPath, FileMode.Append);
-        var offset = fs.Seek(0, SeekOrigin.End);
-        using StreamWriter sw = new(fs);
+        fs.Seek(0, SeekOrigin.End);
+        var offset = fs.Position;
+        
+        string kvp = $"{key},{value}";
+        byte[] bytes = System.Text.Encoding.UTF8.GetBytes(kvp);
+        fs.Write(bytes);
 
-        // todo: write, format, csv
-        sw.WriteLine($"{key},{value}");
-
-        index[key] = offset;
+        // todo: ensure file size does not exceed 2gb
+        System.Console.WriteLine($"Offset: {offset} Bytes Length: {bytes.Length}");
+        index[key] = new ByteData((int)offset, bytes.Length);
     }
 }
+
+public record ByteData(int Offset, int Length);

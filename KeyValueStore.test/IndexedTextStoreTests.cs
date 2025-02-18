@@ -34,7 +34,6 @@ public class IndexedTextStoreTests
         Assert.Equal(string.Empty, result);
     }
 
-
     [Fact]
     public void Indexed_WhenTheSameKeyHasBeenSetTwice_ReturnTheLatestValue()
     {
@@ -56,5 +55,4 @@ public class IndexedTextStoreTests
         var result = store.Get("foo");
         Assert.Equal("Good,bye", result);
     }
-
 }
