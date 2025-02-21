@@ -26,19 +26,12 @@ public class IndexedTextStore : IKeyValueStore
 
         using FileStream fs = new(dbPath, FileMode.Open, FileAccess.Read);
         fs.Seek(byteData.Offset, SeekOrigin.Begin);
-        System.Console.WriteLine(fs.Position);
+        
         var byteBufffer = new byte[byteData.Length];
         fs.ReadExactly(byteBufffer, 0, byteData.Length);
 
-        var kvpString = System.Text.Encoding.UTF8.GetString(byteBufffer);
+        var value = System.Text.Encoding.UTF8.GetString(byteBufffer);
 
-        // todo: dont rely on only one comma
-        string[] parts = kvpString.Split(',', 2);
-        string value = string.Empty;
-        if (parts[0] == key)
-        {
-            value = parts[1];
-        }
         return value;
     }
 
@@ -51,14 +44,16 @@ public class IndexedTextStore : IKeyValueStore
         using FileStream fs = new(dbPath, FileMode.Append);
         fs.Seek(0, SeekOrigin.End);
         var offset = fs.Position;
-        
-        string kvp = $"{key},{value}";
-        byte[] bytes = System.Text.Encoding.UTF8.GetBytes(kvp);
-        fs.Write(bytes);
+
+        byte[] keyBytes = System.Text.Encoding.UTF8.GetBytes(key);
+        byte[] valueBytes = System.Text.Encoding.UTF8.GetBytes(value);
+
+        // todo: we will have to consider writing the byte length to be able to rebuild the index
+        fs.Write(keyBytes);
+        fs.Write(valueBytes);
 
         // todo: ensure file size does not exceed 2gb
-        System.Console.WriteLine($"Offset: {offset} Bytes Length: {bytes.Length}");
-        index[key] = new ByteData((int)offset, bytes.Length);
+        index[key] = new ByteData((int)offset + keyBytes.Length, valueBytes.Length);
     }
 }
 
