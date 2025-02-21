@@ -3,10 +3,10 @@ namespace KeyValueStore.api.Store;
 public class IndexedTextStore : IKeyValueStore
 {
     private static readonly Dictionary<string, ByteData> index;
+    private static string dbPath = "D:\\source\\KeyValueStore\\db.txt";
 
     static IndexedTextStore()
     {
-        string dbPath = "D:\\source\\KeyValueStore\\db.txt";
         FileStream fileStream = File.Open(dbPath, FileMode.Open);
 
         fileStream.SetLength(0);
@@ -22,25 +22,17 @@ public class IndexedTextStore : IKeyValueStore
             return null;
         }
 
-        string dbPath = "D:\\source\\KeyValueStore\\db.txt";
-
         using FileStream fs = new(dbPath, FileMode.Open, FileAccess.Read);
         fs.Seek(byteData.Offset, SeekOrigin.Begin);
         
         var byteBufffer = new byte[byteData.Length];
         fs.ReadExactly(byteBufffer, 0, byteData.Length);
 
-        var value = System.Text.Encoding.UTF8.GetString(byteBufffer);
-
-        return value;
+        return System.Text.Encoding.UTF8.GetString(byteBufffer);
     }
 
-    // todo: should the key be an int or guid? does it need to be specified or returned?
     public void Set(string key, string value)
     {
-        // todo: sanitize string
-        string dbPath = "D:\\source\\KeyValueStore\\db.txt";
-
         using FileStream fs = new(dbPath, FileMode.Append);
         fs.Seek(0, SeekOrigin.End);
         var offset = fs.Position;
