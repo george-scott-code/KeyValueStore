@@ -32,8 +32,8 @@ public class IndexedTextStore : IKeyValueStore
 
         var kvpString = System.Text.Encoding.UTF8.GetString(byteBufffer);
 
-        // todo: null
-        string[] parts = kvpString.Split(',');
+        // todo: dont rely on only one comma
+        string[] parts = kvpString.Split(',', 2);
         string value = string.Empty;
         if (parts[0] == key)
         {
