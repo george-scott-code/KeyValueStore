@@ -2,15 +2,12 @@ namespace KeyValueStore.api.Store;
 
 public class IndexedTextStore : IKeyValueStore
 {
-    private static readonly Dictionary<string, ByteData> index;
-    private static string dbPath = "D:\\source\\KeyValueStore\\db.txt";
+    private readonly Dictionary<string, ByteData> index;
+    private readonly IKeyValueStoreFileProvider _fileProvider;
 
-    static IndexedTextStore()
+    public IndexedTextStore(IKeyValueStoreFileProvider fileProvider)
     {
-        FileStream fileStream = File.Open(dbPath, FileMode.Open);
-
-        fileStream.SetLength(0);
-        fileStream.Close();
+        _fileProvider = fileProvider;
 
         index = [];
     }
@@ -22,7 +19,7 @@ public class IndexedTextStore : IKeyValueStore
             return null;
         }
 
-        using FileStream fs = new(dbPath, FileMode.Open, FileAccess.Read);
+        using FileStream fs = new(_fileProvider.GetFilePath(), FileMode.Open, FileAccess.Read);
         fs.Seek(byteData.Offset, SeekOrigin.Begin);
         
         var byteBufffer = new byte[byteData.Length];
@@ -33,7 +30,7 @@ public class IndexedTextStore : IKeyValueStore
 
     public void Set(string key, string value)
     {
-        using FileStream fs = new(dbPath, FileMode.Append);
+        using FileStream fs = new(_fileProvider.GetFilePath(), FileMode.Append);
         fs.Seek(0, SeekOrigin.End);
         var offset = fs.Position;
 
@@ -50,3 +47,35 @@ public class IndexedTextStore : IKeyValueStore
 }
 
 public record ByteData(int Offset, int Length);
+
+public interface IKeyValueStoreFileProvider
+{
+    public string GetFilePath();
+}
+
+public class KeyValueStoreFileProvider : IKeyValueStoreFileProvider
+{
+    private static string dbPath = "D:\\source\\KeyValueStore\\db.txt";
+    public string GetFilePath()
+    {
+        return dbPath;
+    }
+}
+
+public class TestKeyValueStoreFileProvider : IKeyValueStoreFileProvider
+{
+    private static string dbPath = "D:\\source\\KeyValueStore\\db.txt";
+
+    public TestKeyValueStoreFileProvider()
+    {
+        FileStream fileStream = File.Open(dbPath, FileMode.Open);
+
+        fileStream.SetLength(0);
+        fileStream.Close();
+    }
+
+    public string GetFilePath()
+    {
+        return dbPath;
+    }
+}

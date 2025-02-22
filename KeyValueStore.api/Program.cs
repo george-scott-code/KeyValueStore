@@ -1,4 +1,5 @@
 using KeyValueStore.api.Store;
+using Microsoft.Extensions.FileProviders;
 
 internal class Program
 {
@@ -11,6 +12,9 @@ internal class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
+        builder.Services.AddSingleton<IKeyValueStoreFileProvider, KeyValueStoreFileProvider>();
+        builder.Services.AddSingleton<IndexedTextStore, IndexedTextStore>();
+
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
@@ -22,7 +26,7 @@ internal class Program
 
         app.UseHttpsRedirection();
 
-        var store = new IndexedTextStore();
+        var store = app.Services.GetService<IndexedTextStore>();
 
         app.MapGet("/value", (string key) =>
         {
