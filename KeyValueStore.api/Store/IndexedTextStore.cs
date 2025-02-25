@@ -43,13 +43,16 @@ public class IndexedTextStore : IKeyValueStore
 
         byte[] keyBytes = System.Text.Encoding.UTF8.GetBytes(key);
         byte[] valueBytes = System.Text.Encoding.UTF8.GetBytes(value);
+        // byte[] valueBytesLength = System.Text.Encoding.UTF8.GetBytes(value.Length); 
 
         // todo: we will have to consider writing the byte length to be able to rebuild the index
         fs.Write(keyBytes);
+        // todo: consider max length
+        fs.Write(new byte[] { (byte)keyBytes.Length });
         fs.Write(valueBytes);
 
         // todo: ensure file size does not exceed 2gb
-        index[key] = new ByteData((int)offset + keyBytes.Length, valueBytes.Length);
+        index[key] = new ByteData((int) offset + 1 + keyBytes.Length, valueBytes.Length);
     }
 
     public void BuildIndex()
