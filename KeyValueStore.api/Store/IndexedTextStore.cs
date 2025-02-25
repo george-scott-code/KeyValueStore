@@ -2,14 +2,19 @@ namespace KeyValueStore.api.Store;
 
 public class IndexedTextStore : IKeyValueStore
 {
-    private readonly Dictionary<string, ByteData> index;
+    private readonly Dictionary<string, ByteData> index = [];
     private readonly IKeyValueStoreFileProvider _fileProvider;
 
     public IndexedTextStore(IKeyValueStoreFileProvider fileProvider)
     {
         _fileProvider = fileProvider;
 
-        index = [];
+        using FileStream fs = new(_fileProvider.GetFilePath(), FileMode.Open, FileAccess.Read);
+
+        if(fs.Length != 0)
+        {
+            BuildIndex();
+        }
     }
 
     public string? Get(string key)
@@ -44,6 +49,11 @@ public class IndexedTextStore : IKeyValueStore
         // todo: ensure file size does not exceed 2gb
         index[key] = new ByteData((int)offset + keyBytes.Length, valueBytes.Length);
     }
+
+    public void BuildIndex()
+    {
+        throw new NotImplementedException();
+    }
 }
 
 public record ByteData(int Offset, int Length);
@@ -64,18 +74,25 @@ public class KeyValueStoreFileProvider : IKeyValueStoreFileProvider
 
 public class TestKeyValueStoreFileProvider : IKeyValueStoreFileProvider
 {
-    private static string dbPath = "D:\\source\\KeyValueStore\\db.txt";
+    private string _dbPath = "D:\\source\\KeyValueStore\\db.txt";
 
-    public TestKeyValueStoreFileProvider()
+    public TestKeyValueStoreFileProvider(string? dbPath = null)
     {
-        FileStream fileStream = File.Open(dbPath, FileMode.Open);
+        if(dbPath != null)
+        {
+            _dbPath = dbPath;
+        }
+        else
+        {
+            FileStream fileStream = File.Open(_dbPath, FileMode.Open);
 
-        fileStream.SetLength(0);
-        fileStream.Close();
+            fileStream.SetLength(0);
+            fileStream.Close();
+        }
     }
 
     public string GetFilePath()
     {
-        return dbPath;
+        return _dbPath;
     }
 }

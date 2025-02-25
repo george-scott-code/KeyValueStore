@@ -56,4 +56,14 @@ public class IndexedTextStoreTests
         var result = store.Get("foo");
         Assert.Equal("Good,bye", result);
     }
+
+    [Fact]
+    public void WhenTheFileNeedsToBeReIndexed()
+    {
+        var store = new IndexedTextStore(new TestKeyValueStoreFileProvider("D:\\source\\KeyValueStore\\db_noIndex.txt"));
+
+        var result = store.Get("Hello");
+        Assert.Equal("World", result);
+    }
+
 }
