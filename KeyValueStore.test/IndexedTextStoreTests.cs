@@ -1,5 +1,7 @@
+using KeyValueStore.api.Data;
 using KeyValueStore.api.Store;
-namespace KeyValueStore;
+
+namespace KeyValueStore.test;
 
 public class IndexedTextStoreTests
 {

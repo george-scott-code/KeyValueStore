@@ -1,3 +1,5 @@
+using KeyValueStore.api.Data;
+
 namespace KeyValueStore.api.Store;
 
 public class IndexedTextStore : IKeyValueStore
@@ -57,42 +59,3 @@ public class IndexedTextStore : IKeyValueStore
 }
 
 public record ByteData(int Offset, int Length);
-
-public interface IKeyValueStoreFileProvider
-{
-    public string GetFilePath();
-}
-
-public class KeyValueStoreFileProvider : IKeyValueStoreFileProvider
-{
-    private static string dbPath = "D:\\source\\KeyValueStore\\db.txt";
-    public string GetFilePath()
-    {
-        return dbPath;
-    }
-}
-
-public class TestKeyValueStoreFileProvider : IKeyValueStoreFileProvider
-{
-    private string _dbPath = "D:\\source\\KeyValueStore\\db.txt";
-
-    public TestKeyValueStoreFileProvider(string? dbPath = null)
-    {
-        if(dbPath != null)
-        {
-            _dbPath = dbPath;
-        }
-        else
-        {
-            FileStream fileStream = File.Open(_dbPath, FileMode.Open);
-
-            fileStream.SetLength(0);
-            fileStream.Close();
-        }
-    }
-
-    public string GetFilePath()
-    {
-        return _dbPath;
-    }
-}

@@ -1,3 +1,4 @@
+using KeyValueStore.api.Data;
 using KeyValueStore.api.Store;
 using Microsoft.Extensions.FileProviders;
 
