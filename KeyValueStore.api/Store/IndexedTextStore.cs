@@ -57,18 +57,29 @@ public class IndexedTextStore : IKeyValueStore
     public void BuildIndex()
     {
         using FileStream fs = new(_fileProvider.GetFilePath(), FileMode.Open, FileAccess.Read);
+        var isIndexing = true;
 
-        var offset = fs.Position;
-        var keyLength = fs.ReadByte();
-        var keyBytes = new byte[keyLength];
-        fs.ReadExactly(keyBytes, 0, keyLength);
-        
-        var key = System.Text.Encoding.UTF8.GetString(keyBytes);
-        var valueLength = fs.ReadByte();
-        var valueBytes = new byte[valueLength];
-        fs.ReadExactly(valueBytes, 0, valueLength);
-        
-        index[key] = new ByteData((int) offset + 2 + keyBytes.Length, valueBytes.Length);
+        while(isIndexing)
+        {
+            var offset = fs.Position;
+            var keyLength = fs.ReadByte();
+            if(keyLength == -1)
+            {
+                isIndexing = false;
+            }
+            else
+            {
+                var keyBytes = new byte[keyLength];
+                fs.ReadExactly(keyBytes, 0, keyLength);
+                
+                var key = System.Text.Encoding.UTF8.GetString(keyBytes);
+                var valueLength = fs.ReadByte();
+                var valueBytes = new byte[valueLength];
+                fs.ReadExactly(valueBytes, 0, valueLength);
+                
+                index[key] = new ByteData((int) offset + 2 + keyBytes.Length, valueBytes.Length);
+            }
+        }
     }
 }
 

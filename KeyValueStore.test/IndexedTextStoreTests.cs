@@ -66,5 +66,7 @@ public class IndexedTextStoreTests
 
         var result = store.Get("foo");
         Assert.Equal("Good,bye", result);
+        var result2 = store.Get("bar");
+        Assert.Equal("Good,bye", result2);
     }
 }
