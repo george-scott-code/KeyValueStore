@@ -1,1 +1,1 @@
-HelloWorld
+fooGood,bye
