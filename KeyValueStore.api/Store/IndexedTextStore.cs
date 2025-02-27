@@ -54,6 +54,12 @@ public class IndexedTextStore : IKeyValueStore
         index[key] = new ByteData((int) offset + 2 + keyBytes.Length, valueBytes.Length);
     }
 
+    public void Remove(string key)
+    {
+        index.Remove(key);
+        // TODO: the KV will still be present in the log
+    }
+
     public void BuildIndex()
     {
         using FileStream fs = new(_fileProvider.GetFilePath(), FileMode.Open, FileAccess.Read);

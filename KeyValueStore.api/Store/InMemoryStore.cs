@@ -19,4 +19,9 @@ public class InMemoryStore : IKeyValueStore
         _store.TryGetValue(key, out var value);
         return value is null ? string.Empty : value;
     }
+
+    public void Remove(string key)
+    {
+        _store.Remove(key);
+    }
 }

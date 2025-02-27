@@ -60,6 +60,21 @@ public class IndexedTextStoreTests
     }
 
     [Fact]
+    public void WhenTheKeyHasBeenDeleted()
+    {
+        var store = new IndexedTextStore(new TestKeyValueStoreFileProvider());
+
+        store.Set("Hello", "World");
+
+        var result = store.Get("Hello");
+        Assert.Equal("World", result);
+
+        store.Remove("Hello");
+        var result2 = store.Get("Hello");
+        Assert.Null(result2);
+    }
+
+    [Fact]
     public void WhenTheFileNeedsToBeReIndexed()
     {
         var store = new IndexedTextStore(new TestKeyValueStoreFileProvider("D:\\source\\KeyValueStore\\db_noIndex.txt"));
