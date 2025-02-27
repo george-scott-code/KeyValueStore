@@ -23,7 +23,7 @@ public class IndexedTextStore : IKeyValueStore
     {
         if(!index.TryGetValue(key, out ByteData? byteData))
         {
-            return null;
+            return string.Empty;
         }
 
         using FileStream fs = new(_fileProvider.GetFilePath(), FileMode.Open, FileAccess.Read);

@@ -22,7 +22,7 @@ public class IndexedTextStoreTests
         var store = new IndexedTextStore(new TestKeyValueStoreFileProvider());
 
         var result = store.Get("Goodbye");
-        Assert.Null(result);
+        Assert.Equal("", result);
     }
 
 
@@ -71,7 +71,7 @@ public class IndexedTextStoreTests
 
         store.Remove("Hello");
         var result2 = store.Get("Hello");
-        Assert.Null(result2);
+        Assert.Equal("", result2);
     }
 
     [Fact]
