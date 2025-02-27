@@ -43,6 +43,13 @@ internal class Program
         .WithName("PostValue")
         .WithOpenApi();
 
+        app.MapDelete("/value", (string key) =>
+        {
+            store.Remove(key);
+        })
+        .WithName("Remove")
+        .WithOpenApi();
+
         app.Run();
     }
 }
