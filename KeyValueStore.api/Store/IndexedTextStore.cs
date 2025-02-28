@@ -56,8 +56,20 @@ public class IndexedTextStore : IKeyValueStore
 
     public void Remove(string key)
     {
+        index.TryGetValue(key, out ByteData? byteData);
+
+        if(byteData is null) 
+        {
+            return;
+        }
+
+        // TODO: the KV will stil be present in the log
+        // could we write to delete file? then check the file before / during re-index? 
+        // how would we know if a later key has been added?
+        // using FileStream fs = new(_fileProvider.GetFilePath()_del, FileMode.Open, FileAccess.ReadWrite);
+       
+
         index.Remove(key);
-        // TODO: the KV will still be present in the log
     }
 
     public void BuildIndex()
