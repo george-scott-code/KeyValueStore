@@ -44,10 +44,10 @@ public class IndexedTextStore : IKeyValueStore
         byte[] keyBytes = System.Text.Encoding.UTF8.GetBytes(key);
         byte[] valueBytes = System.Text.Encoding.UTF8.GetBytes(value);
 
-        fs.Write(new byte[] { (byte)keyBytes.Length });
+        fs.Write([(byte)keyBytes.Length]);
         fs.Write(keyBytes);
         // todo: consider max length
-        fs.Write(new byte[] { (byte)valueBytes.Length });
+        fs.Write([(byte)valueBytes.Length]);
         fs.Write(valueBytes);
 
         // todo: ensure file size does not exceed 2gb
@@ -63,11 +63,14 @@ public class IndexedTextStore : IKeyValueStore
             return;
         }
 
-        // TODO: the KV will stil be present in the log
-        // could we write to delete file? then check the file before / during re-index? 
-        // how would we know if a later key has been added?
-        // using FileStream fs = new(_fileProvider.GetFilePath()_del, FileMode.Open, FileAccess.ReadWrite);
-       
+        using FileStream fs = new(_fileProvider.GetFilePath(), FileMode.Append);
+        fs.Seek(0, SeekOrigin.End);
+        
+        byte[] keyBytes = System.Text.Encoding.UTF8.GetBytes(key);
+
+        fs.Write([(byte)keyBytes.Length]);
+        fs.Write(keyBytes);
+        fs.Write([0]);
 
         index.Remove(key);
     }
