@@ -95,10 +95,17 @@ public class IndexedTextStore : IKeyValueStore
                 
                 var key = System.Text.Encoding.UTF8.GetString(keyBytes);
                 var valueLength = fs.ReadByte();
-                var valueBytes = new byte[valueLength];
-                fs.ReadExactly(valueBytes, 0, valueLength);
-                
-                index[key] = new ByteData((int) offset + 2 + keyBytes.Length, valueBytes.Length);
+                if(valueLength == 0 || valueLength == -1)
+                {
+                    index.Remove(key);
+                }
+                else
+                {
+                    var valueBytes = new byte[valueLength];
+                    fs.ReadExactly(valueBytes, 0, valueLength);
+                    
+                    index[key] = new ByteData((int) offset + 2 + keyBytes.Length, valueBytes.Length);
+                }                    
             }
         }
     }
