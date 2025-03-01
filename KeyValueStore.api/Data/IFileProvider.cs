@@ -1,6 +1,6 @@
 namespace KeyValueStore.api.Data;
 
-public interface IKeyValueStoreFileProvider
+public interface IFileProvider
 {
     public string GetFilePath();
 }

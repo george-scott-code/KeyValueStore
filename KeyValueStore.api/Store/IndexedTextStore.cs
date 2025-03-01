@@ -5,9 +5,9 @@ namespace KeyValueStore.api.Store;
 public class IndexedTextStore : IKeyValueStore
 {
     private readonly Dictionary<string, ByteData> index = [];
-    private readonly IKeyValueStoreFileProvider _fileProvider;
+    private readonly IFileProvider _fileProvider;
 
-    public IndexedTextStore(IKeyValueStoreFileProvider fileProvider)
+    public IndexedTextStore(IFileProvider fileProvider)
     {
         _fileProvider = fileProvider;
 

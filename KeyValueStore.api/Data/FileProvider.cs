@@ -1,6 +1,6 @@
 namespace KeyValueStore.api.Data;
 
-public class KeyValueStoreFileProvider : IKeyValueStoreFileProvider
+public class FileProvider : IFileProvider
 {
     private static string dbPath = "D:\\source\\KeyValueStore\\db.txt";
     public string GetFilePath()

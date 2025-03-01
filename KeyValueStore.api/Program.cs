@@ -1,6 +1,5 @@
 using KeyValueStore.api.Data;
 using KeyValueStore.api.Store;
-using Microsoft.Extensions.FileProviders;
 
 internal class Program
 {
@@ -13,7 +12,7 @@ internal class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
-        builder.Services.AddSingleton<IKeyValueStoreFileProvider, KeyValueStoreFileProvider>();
+        builder.Services.AddSingleton<IFileProvider, FileProvider>();
         builder.Services.AddSingleton<IndexedTextStore, IndexedTextStore>();
 
         var app = builder.Build();

@@ -1,10 +1,10 @@
 namespace KeyValueStore.api.Data;
 
-public class TestKeyValueStoreFileProvider : IKeyValueStoreFileProvider
+public class TestFileProvider : IFileProvider
 {
     private readonly string _dbPath = "D:\\source\\KeyValueStore\\db.txt";
 
-    public TestKeyValueStoreFileProvider(string? dbPath = null)
+    public TestFileProvider(string? dbPath = null)
     {
         if(dbPath != null)
         {
