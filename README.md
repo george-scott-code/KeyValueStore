@@ -12,9 +12,10 @@ Roadmap:
 - Sequential write CSV text file storage
 - Encoded storage in bytes
 - Hash Map Index
-- Segmentation
-- deletion
 - crash recovery
-- concurrency
+- deletion
 
+- Segmentation
+- concurrency
 - SST tables
+
