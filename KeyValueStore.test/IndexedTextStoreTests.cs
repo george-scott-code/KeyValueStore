@@ -77,7 +77,7 @@ public class IndexedTextStoreTests
     [Fact]
     public void WhenTheFileNeedsToBeReIndexed()
     {
-        var store = new IndexedTextStore(new TestFileProvider("D:\\source\\KeyValueStore\\db_noIndex.txt"));
+        var store = new IndexedTextStore(new TestFileProvider("D:\\source\\KeyValueStore\\Database\\Test", "db_noIndex"));
 
         var result = store.Get("foo");
         Assert.Equal("Good,bye", result);
