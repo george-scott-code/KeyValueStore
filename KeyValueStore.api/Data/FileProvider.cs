@@ -2,9 +2,12 @@ namespace KeyValueStore.api.Data;
 
 public class FileProvider : IFileProvider
 {
-    private static string dbPath = "D:\\source\\KeyValueStore\\db.txt";
+    private static string _dbPath = "D:\\source\\KeyValueStore\\Database\\Main";
+    private static string _dbName = "db";
+    
+    //TODO: we will have to support one file for writing and potential multiple files for reading
     public string GetFilePath()
     {
-        return dbPath;
+        return $"{_dbPath}/{_dbName}.txt";
     }
 }
