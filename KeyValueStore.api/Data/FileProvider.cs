@@ -10,7 +10,6 @@ public class FileProvider : IFileProvider
     {
         if(!Directory.Exists(_dbPath))
         {
-            //create folder
             Directory.CreateDirectory(_dbPath);
         }
         var filePath = $"{_dbPath}/{_dbName}";

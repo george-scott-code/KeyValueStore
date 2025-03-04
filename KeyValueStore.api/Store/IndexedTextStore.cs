@@ -1,3 +1,4 @@
+using System.Buffers.Binary;
 using KeyValueStore.api.Data;
 
 namespace KeyValueStore.api.Store;
@@ -44,14 +45,18 @@ public class IndexedTextStore : IKeyValueStore
         byte[] keyBytes = System.Text.Encoding.UTF8.GetBytes(key);
         byte[] valueBytes = System.Text.Encoding.UTF8.GetBytes(value);
 
-        fs.Write([(byte)keyBytes.Length]);
+        byte[] keyLengthBytes = new byte[4];
+        BinaryPrimitives.WriteInt32BigEndian(keyBytes, keyBytes.Length);
+        fs.Write(keyLengthBytes);
         fs.Write(keyBytes);
         // todo: consider max length
-        fs.Write([(byte)valueBytes.Length]);
+        byte[] bytes = new byte[4];
+        BinaryPrimitives.WriteInt32BigEndian(bytes, valueBytes.Length);
+        fs.Write(bytes);
         fs.Write(valueBytes);
 
         // todo: ensure file size does not exceed 2gb
-        index[key] = new ByteData((int) offset + 2 + keyBytes.Length, valueBytes.Length);
+        index[key] = new ByteData((int) offset + 8 + keyBytes.Length, valueBytes.Length);
     }
 
     public void Remove(string key)
@@ -67,8 +72,10 @@ public class IndexedTextStore : IKeyValueStore
         fs.Seek(0, SeekOrigin.End);
         
         byte[] keyBytes = System.Text.Encoding.UTF8.GetBytes(key);
+        byte[] keyLengthBytes = new byte[4];
+        BinaryPrimitives.WriteInt32BigEndian(keyBytes, keyBytes.Length);
 
-        fs.Write([(byte)keyBytes.Length]);
+        fs.Write(keyLengthBytes);
         fs.Write(keyBytes);
         fs.Write([0]);
 
