@@ -10,8 +10,8 @@ public class IndexedTextStore : IKeyValueStore
     public IndexedTextStore(IFileProvider fileProvider)
     {
         _fileProvider = fileProvider;
-
-        using FileStream fs = new(_fileProvider.GetFilePath(), FileMode.Open, FileAccess.Read);
+        var filePath = _fileProvider.GetFilePath();
+        using FileStream fs = new(filePath, FileMode.Open, FileAccess.Read);
 
         if(fs.Length != 0)
         {
@@ -94,7 +94,7 @@ public class IndexedTextStore : IKeyValueStore
             
             var key = System.Text.Encoding.UTF8.GetString(keyBytes);
             var valueLength = fs.ReadByte();
-            if(valueLength == 0 || valueLength == -1)
+            if (valueLength == 0 || valueLength == -1) // KV removed
             {
                 index.Remove(key);
             }

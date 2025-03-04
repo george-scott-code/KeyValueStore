@@ -8,6 +8,16 @@ public class FileProvider : IFileProvider
     //TODO: we will have to support one file for writing and potential multiple files for reading
     public string GetFilePath()
     {
-        return $"{_dbPath}/{_dbName}.txt";
+        if(!Directory.Exists(_dbPath))
+        {
+            //create folder
+            Directory.CreateDirectory(_dbPath);
+        }
+        var filePath = $"{_dbPath}/{_dbName}";
+        if(!File.Exists(filePath))
+        {
+            using var _ = File.Create(filePath);
+        }
+        return filePath;
     }
 }
