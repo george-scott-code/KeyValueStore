@@ -46,13 +46,13 @@ public class IndexedTextStore : IKeyValueStore
         byte[] valueBytes = System.Text.Encoding.UTF8.GetBytes(value);
 
         byte[] keyLengthBytes = new byte[4];
-        BinaryPrimitives.WriteInt32BigEndian(keyBytes, keyBytes.Length);
+        BinaryPrimitives.WriteInt32BigEndian(keyLengthBytes, keyBytes.Length);
         fs.Write(keyLengthBytes);
         fs.Write(keyBytes);
         // todo: consider max length
-        byte[] bytes = new byte[4];
-        BinaryPrimitives.WriteInt32BigEndian(bytes, valueBytes.Length);
-        fs.Write(bytes);
+        byte[] valueLengthBytes = new byte[4];
+        BinaryPrimitives.WriteInt32BigEndian(valueLengthBytes, valueBytes.Length);
+        fs.Write(valueLengthBytes);
         fs.Write(valueBytes);
 
         // todo: ensure file size does not exceed 2gb
