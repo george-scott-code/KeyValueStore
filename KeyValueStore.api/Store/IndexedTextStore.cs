@@ -49,6 +49,7 @@ public class IndexedTextStore : IKeyValueStore
         BinaryPrimitives.WriteInt32BigEndian(keyLengthBytes, keyBytes.Length);
         fs.Write(keyLengthBytes);
         fs.Write(keyBytes);
+
         // todo: consider max length
         byte[] valueLengthBytes = new byte[4];
         BinaryPrimitives.WriteInt32BigEndian(valueLengthBytes, valueBytes.Length);
@@ -73,16 +74,19 @@ public class IndexedTextStore : IKeyValueStore
         
         byte[] keyBytes = System.Text.Encoding.UTF8.GetBytes(key);
         byte[] keyLengthBytes = new byte[4];
-        BinaryPrimitives.WriteInt32BigEndian(keyBytes, keyBytes.Length);
-
+        BinaryPrimitives.WriteInt32BigEndian(keyLengthBytes, keyBytes.Length);
+        
         fs.Write(keyLengthBytes);
         fs.Write(keyBytes);
-        fs.Write([0]);
+
+        byte[] valueLengthBytes = new byte[4];
+        BinaryPrimitives.WriteInt32BigEndian(valueLengthBytes, 0);
+        fs.Write(valueLengthBytes);
 
         index.Remove(key);
     }
 
-    public async void BuildIndex()
+    public void BuildIndex()
     {
         using FileStream fs = new(_fileProvider.GetFilePath(), FileMode.Open, FileAccess.Read);
         var isIndexing = true;
@@ -105,8 +109,12 @@ public class IndexedTextStore : IKeyValueStore
             fs.ReadExactly(keyBytes, 0, keyLength);
             
             var key = System.Text.Encoding.UTF8.GetString(keyBytes);
-            var valueLength = fs.ReadByte();
-            if (valueLength == 0 || valueLength == -1) // KV removed
+
+            var valueLengthBytes = new byte[4];
+            fs.ReadExactly(valueLengthBytes, 0, 4);
+            var valueLength = BinaryPrimitives.ReadInt32BigEndian(valueLengthBytes);
+
+            if (valueLength == 0) // KV removed
             {
                 index.Remove(key);
             }
@@ -115,7 +123,7 @@ public class IndexedTextStore : IKeyValueStore
                 var valueBytes = new byte[valueLength];
                 fs.ReadExactly(valueBytes, 0, valueLength);
                 
-                index[key] = new ByteData((int) offset + 2 + keyBytes.Length, valueBytes.Length);
+                index[key] = new ByteData((int) offset + 8 + keyBytes.Length, valueBytes.Length);
             }
         }
     }
