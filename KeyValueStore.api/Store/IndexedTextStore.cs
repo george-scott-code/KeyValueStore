@@ -82,20 +82,25 @@ public class IndexedTextStore : IKeyValueStore
         index.Remove(key);
     }
 
-    public void BuildIndex()
+    public async void BuildIndex()
     {
         using FileStream fs = new(_fileProvider.GetFilePath(), FileMode.Open, FileAccess.Read);
         var isIndexing = true;
 
         while(isIndexing)
         {
-            var offset = fs.Position;
-            var keyLength = fs.ReadByte();
-            if(keyLength == -1)
+            if(fs.Position == fs.Length)
             {
                 isIndexing = false;
                 return;
             }
+
+            var offset = fs.Position;
+            var keyLengthBytes = new byte[4];
+
+            fs.ReadExactly(keyLengthBytes, 0, 4);
+            var keyLength = BinaryPrimitives.ReadInt32BigEndian(keyLengthBytes);
+
             var keyBytes = new byte[keyLength];
             fs.ReadExactly(keyBytes, 0, keyLength);
             
