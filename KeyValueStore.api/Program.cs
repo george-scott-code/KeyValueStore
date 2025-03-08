@@ -26,25 +26,25 @@ internal class Program
 
         app.UseHttpsRedirection();
 
-        var store = app.Services.GetService<IndexedTextStore>();
-
+        var indexedTextStore = app.Services.GetService<IndexedTextStore>() ?? throw new ArgumentNullException();
+        
         app.MapGet("/value", (string key) =>
         {
-            return store.Get(key);
+            return indexedTextStore.Get(key);
         })
         .WithName("GetValue")
         .WithOpenApi();
 
         app.MapPost("/value", (string key, string value) =>
         {
-            store.Set(key, value);
+            indexedTextStore.Set(key, value);
         })
         .WithName("PostValue")
         .WithOpenApi();
 
         app.MapDelete("/value", (string key) =>
         {
-            store.Remove(key);
+            indexedTextStore.Remove(key);
         })
         .WithName("Remove")
         .WithOpenApi();
