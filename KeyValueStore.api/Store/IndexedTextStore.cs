@@ -14,15 +14,15 @@ public class IndexedTextStore : IKeyValueStore
         var filePath = _fileProvider.GetFilePath();
         using FileStream fs = new(filePath, FileMode.Open, FileAccess.Read);
 
-        if(fs.Length != 0)
+        if (fs.Length != 0)
         {
             BuildIndex();
         }
     }
 
-    public string? Get(string key)
+    public string Get(string key)
     {
-        if(!index.TryGetValue(key, out ByteData? byteData))
+        if (!index.TryGetValue(key, out ByteData? byteData))
         {
             return string.Empty;
         }
@@ -40,7 +40,6 @@ public class IndexedTextStore : IKeyValueStore
     {
         using FileStream fs = new(_fileProvider.GetFilePath(), FileMode.Append);
         fs.Seek(0, SeekOrigin.End);
-        var offset = fs.Position;
 
         byte[] keyBytes = System.Text.Encoding.UTF8.GetBytes(key);
         byte[] valueBytes = System.Text.Encoding.UTF8.GetBytes(value);
@@ -50,21 +49,24 @@ public class IndexedTextStore : IKeyValueStore
         fs.Write(keyLengthBytes);
         fs.Write(keyBytes);
 
+
         // todo: consider max length
         byte[] valueLengthBytes = new byte[4];
         BinaryPrimitives.WriteInt32BigEndian(valueLengthBytes, valueBytes.Length);
         fs.Write(valueLengthBytes);
+        
+        var offset = fs.Position;
         fs.Write(valueBytes);
 
         // todo: ensure file size does not exceed 2gb
-        index[key] = new ByteData((int) offset + 8 + keyBytes.Length, valueBytes.Length);
+        index[key] = new ByteData((int) offset, valueBytes.Length);
     }
 
     public void Remove(string key)
     {
         index.TryGetValue(key, out ByteData? byteData);
 
-        if(byteData is null) 
+        if (byteData is null) 
         {
             return;
         }
@@ -91,9 +93,9 @@ public class IndexedTextStore : IKeyValueStore
         using FileStream fs = new(_fileProvider.GetFilePath(), FileMode.Open, FileAccess.Read);
         var isIndexing = true;
 
-        while(isIndexing)
+        while (isIndexing)
         {
-            if(fs.Position == fs.Length)
+            if (fs.Position == fs.Length)
             {
                 isIndexing = false;
                 return;
