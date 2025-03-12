@@ -84,4 +84,15 @@ public class IndexedTextStoreTests
         var result2 = store.Get("bar");
         Assert.Equal("foo", result2);
     }
+    
+    [Fact]
+    public void WhenTheFileNeedsToBeReIndexedWithDeletedKey()
+    {
+        var store = new IndexedTextStore(new TestFileProvider("D:\\source\\KeyValueStore\\Database\\Test", "db_no_index_delete"));
+
+        var result = store.Get("foo");
+        Assert.Equal("bar", result);
+        var result2 = store.Get("bar");
+        Assert.Equal("", result2);
+    }
 }
