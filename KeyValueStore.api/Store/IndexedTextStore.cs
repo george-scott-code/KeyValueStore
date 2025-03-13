@@ -7,10 +7,13 @@ public class IndexedTextStore : IKeyValueStore
 {
     private readonly Dictionary<string, ByteData> index = [];
     private readonly IFileProvider _fileProvider;
+    private readonly ILogger<IndexedTextStore> _logger;
 
-    public IndexedTextStore(IFileProvider fileProvider)
+    public IndexedTextStore(IFileProvider fileProvider, ILogger<IndexedTextStore> logger)
     {
         _fileProvider = fileProvider;
+        _logger = logger;
+        
         var filePath = _fileProvider.GetFilePath();
         using FileStream fs = new(filePath, FileMode.Open, FileAccess.Read);
 
@@ -90,6 +93,8 @@ public class IndexedTextStore : IKeyValueStore
 
     public void BuildIndex()
     {
+        _logger.LogInformation("Rebuilding Index");
+        
         using FileStream fs = new(_fileProvider.GetFilePath(), FileMode.Open, FileAccess.Read);
         var isIndexing = true;
 
