@@ -11,12 +11,23 @@ public class FileProvider : IFileProvider
         if(!Directory.Exists(_dbPath))
         {
             Directory.CreateDirectory(_dbPath);
+            var filePath = $"{_dbPath}/{_dbName}_{DateTime.UtcNow:yyyyMMddTHHmmss}.db";
+            using FileStream _ = File.Create(filePath);
+
+            return filePath;  
         }
-        var filePath = $"{_dbPath}/{_dbName}";
-        if(!File.Exists(filePath))
+
+        var files = Directory.GetFiles(_dbPath, $"{_dbName}_*", SearchOption.TopDirectoryOnly);
+
+        if (files.Length == 0)
         {
-            using var _ = File.Create(filePath);
+           var filePath = $"{_dbPath}/{_dbName}_{DateTime.UtcNow:yyyyMMddTHHmmss}.db" ;
+           using FileStream _ = File.Create(filePath);
+
+           return filePath;
         }
-        return filePath;
+
+        // TODO: return the latest
+        return files[0];
     }
 }
