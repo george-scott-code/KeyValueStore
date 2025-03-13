@@ -9,7 +9,6 @@ public class IndexedTextStoreTests
     public void WhenTheKeyHasBeenSet()
     {
         var store = new IndexedTextStore(new TestFileProvider());
-
         store.Set("Hello", "World");
 
         var result = store.Get("Hello");
@@ -25,12 +24,32 @@ public class IndexedTextStoreTests
         Assert.Equal("", result);
     }
 
+    [Fact]
+    public void Set_WhenTheKeyIsEmpty()
+    {
+        var store = new IndexedTextStore(new TestFileProvider());
+        store.Set("", "world");
+
+        var result = store.Get("");
+
+        Assert.Equal("world", result);
+    }
+    
+    [Fact]
+    public void Set_WhenTheValueIsEmpty()
+    {
+        var store = new IndexedTextStore(new TestFileProvider());
+        store.Set("Hello", "");
+
+        var result = store.Get("Hello");
+
+        Assert.Equal("", result);
+    }
 
     [Fact]
     public void WhenTheKeyHasBeenSetToAnEmptyValue()
     {
         var store = new IndexedTextStore(new TestFileProvider());
-
         store.Set("foo", string.Empty);
 
         var result = store.Get("foo");
@@ -41,7 +60,6 @@ public class IndexedTextStoreTests
     public void Indexed_WhenTheSameKeyHasBeenSetTwice_ReturnTheLatestValue()
     {
         var store = new IndexedTextStore(new TestFileProvider());
-
         store.Set("Hello", "World");
         store.Set("Hello", "Dog");
 
@@ -63,7 +81,6 @@ public class IndexedTextStoreTests
     public void WhenTheKeyHasBeenDeleted()
     {
         var store = new IndexedTextStore(new TestFileProvider());
-
         store.Set("Hello", "World");
 
         var result = store.Get("Hello");
