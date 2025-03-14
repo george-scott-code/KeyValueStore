@@ -9,18 +9,18 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IFileProvider, FileProvider>();
 builder.Services.AddSingleton<IndexedTextStore, IndexedTextStore>();
 
-  var loggerFactory = LoggerFactory.Create(logging =>
-  {
-      logging.Configure(options =>
-      {
-          options.ActivityTrackingOptions = ActivityTrackingOptions.SpanId
-                                              | ActivityTrackingOptions.TraceId
-                                              | ActivityTrackingOptions.ParentId;
-      }).AddSimpleConsole(options =>
-      {
-          options.IncludeScopes = true;
-      });
-  });
+var loggerFactory = LoggerFactory.Create(logging =>
+{
+    logging.Configure(options =>
+    {
+        options.ActivityTrackingOptions = ActivityTrackingOptions.SpanId
+                                            | ActivityTrackingOptions.TraceId
+                                            | ActivityTrackingOptions.ParentId;
+    }).AddSimpleConsole(options =>
+    {
+        options.IncludeScopes = true;
+    });
+});
 
 var app = builder.Build();
 
