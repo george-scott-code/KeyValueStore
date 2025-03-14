@@ -1,5 +1,6 @@
 using KeyValueStore.api.Data;
 using KeyValueStore.api.Store;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace KeyValueStore.test;
 
@@ -8,7 +9,7 @@ public class IndexedTextStoreTests
     [Fact]
     public void WhenTheKeyHasBeenSet()
     {
-        var store = new IndexedTextStore(new TestFileProvider());
+        var store = new IndexedTextStore(new TestFileProvider(), new NullLogger<IndexedTextStore>());
         store.Set("Hello", "World");
 
         var result = store.Get("Hello");
@@ -18,7 +19,7 @@ public class IndexedTextStoreTests
     [Fact]
     public void WhenTheKeyHasNotBeenSet()
     {
-        var store = new IndexedTextStore(new TestFileProvider());
+        var store = new IndexedTextStore(new TestFileProvider(), new NullLogger<IndexedTextStore>());
 
         var result = store.Get("Goodbye");
         Assert.Equal("", result);
@@ -27,7 +28,7 @@ public class IndexedTextStoreTests
     [Fact]
     public void Set_WhenTheKeyIsEmpty()
     {
-        var store = new IndexedTextStore(new TestFileProvider());
+        var store = new IndexedTextStore(new TestFileProvider(), new NullLogger<IndexedTextStore>());
         store.Set("", "world");
 
         var result = store.Get("");
@@ -38,7 +39,7 @@ public class IndexedTextStoreTests
     [Fact]
     public void Set_WhenTheValueIsEmpty()
     {
-        var store = new IndexedTextStore(new TestFileProvider());
+        var store = new IndexedTextStore(new TestFileProvider(), new NullLogger<IndexedTextStore>());
         store.Set("Hello", "");
 
         var result = store.Get("Hello");
@@ -49,7 +50,7 @@ public class IndexedTextStoreTests
     [Fact]
     public void WhenTheKeyHasBeenSetToAnEmptyValue()
     {
-        var store = new IndexedTextStore(new TestFileProvider());
+        var store = new IndexedTextStore(new TestFileProvider(), new NullLogger<IndexedTextStore>());
         store.Set("foo", string.Empty);
 
         var result = store.Get("foo");
@@ -59,7 +60,7 @@ public class IndexedTextStoreTests
     [Fact]
     public void Indexed_WhenTheSameKeyHasBeenSetTwice_ReturnTheLatestValue()
     {
-        var store = new IndexedTextStore(new TestFileProvider());
+        var store = new IndexedTextStore(new TestFileProvider(), new NullLogger<IndexedTextStore>());
         store.Set("Hello", "World");
         store.Set("Hello", "Dog");
 
@@ -70,7 +71,7 @@ public class IndexedTextStoreTests
     [Fact]
     public void WhenTheKeyHasBeenSetToAValueWithAComma()
     {
-        var store = new IndexedTextStore(new TestFileProvider());
+        var store = new IndexedTextStore(new TestFileProvider(), new NullLogger<IndexedTextStore>());
         store.Set("foo", "Good,bye");
 
         var result = store.Get("foo");
@@ -80,7 +81,7 @@ public class IndexedTextStoreTests
     [Fact]
     public void WhenTheKeyHasBeenDeleted()
     {
-        var store = new IndexedTextStore(new TestFileProvider());
+        var store = new IndexedTextStore(new TestFileProvider(), new NullLogger<IndexedTextStore>());
         store.Set("Hello", "World");
 
         var result = store.Get("Hello");
@@ -94,7 +95,8 @@ public class IndexedTextStoreTests
     [Fact]
     public void WhenTheFileNeedsToBeReIndexed()
     {
-        var store = new IndexedTextStore(new TestFileProvider("D:\\source\\KeyValueStore\\Database\\Test", "db_no_index"));
+        var store = new IndexedTextStore(
+            new TestFileProvider("D:\\source\\KeyValueStore\\Database\\Test", "db_no_index"), new NullLogger<IndexedTextStore>());
 
         var result = store.Get("foo");
         Assert.Equal("bar", result);
@@ -105,7 +107,8 @@ public class IndexedTextStoreTests
     [Fact]
     public void WhenTheFileNeedsToBeReIndexedWithDeletedKey()
     {
-        var store = new IndexedTextStore(new TestFileProvider("D:\\source\\KeyValueStore\\Database\\Test", "db_no_index_delete"));
+        var store = new IndexedTextStore(
+            new TestFileProvider("D:\\source\\KeyValueStore\\Database\\Test", "db_no_index_delete"), new NullLogger<IndexedTextStore>());
 
         var result = store.Get("foo");
         Assert.Equal("bar", result);
