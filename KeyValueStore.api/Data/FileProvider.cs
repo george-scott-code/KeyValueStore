@@ -44,6 +44,7 @@ public class FileProvider : IFileProvider
         }
 
         // TODO: return the latest
-        return files[0];
+        return files.OrderByDescending(static x => 
+            DateTime.ParseExact(x.Split('_')[^1].Split('.')[0], "yyyyMMddTHHmmss", null)).FirstOrDefault();
     }
 }
