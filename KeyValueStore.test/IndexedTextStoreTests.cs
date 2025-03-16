@@ -115,4 +115,16 @@ public class IndexedTextStoreTests
         var result2 = store.Get("bar");
         Assert.Equal("", result2);
     }
+
+    // Segmentation
+
+    [Fact]
+    public void ReIndexedTheStore_WhenThereAreTwoSegments()
+    {
+        var store = new IndexedTextStore(
+            new FileProvider(new NullLogger<FileProvider>(), "D:\\source\\KeyValueStore\\Database\\TestSegments", "db"), new NullLogger<IndexedTextStore>());
+        
+        var result = store.Get("segment");
+        Assert.Equal("two", result);
+    }
 }
