@@ -126,5 +126,8 @@ public class IndexedTextStoreTests
         
         var result = store.Get("segment");
         Assert.Equal("two", result);
+
+        var result2 = store.Get("hello");
+        Assert.Equal("world", result2);
     }
 }
