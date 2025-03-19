@@ -14,8 +14,9 @@ public class IndexedTextStore : IKeyValueStore
         _fileProvider = fileProvider;
         _logger = logger;
         
-        var filePath = _fileProvider.GetFilePath();
-        using FileStream fs = new(filePath, FileMode.Open, FileAccess.Read);
+        // TODO: segmented files
+        var filePath = _fileProvider.GetReadFilePaths();
+        using FileStream fs = new(filePath[0], FileMode.Open, FileAccess.Read);
 
         if (fs.Length != 0)
         {
@@ -30,7 +31,8 @@ public class IndexedTextStore : IKeyValueStore
             return string.Empty;
         }
 
-        using FileStream fs = new(_fileProvider.GetFilePath(), FileMode.Open, FileAccess.Read);
+        // TODO: read from segmented file
+        using FileStream fs = new(_fileProvider.GetReadFilePaths()[0], FileMode.Open, FileAccess.Read);
         fs.Seek(byteData.Offset, SeekOrigin.Begin);
         
         var byteBufffer = new byte[byteData.Length];
@@ -41,7 +43,7 @@ public class IndexedTextStore : IKeyValueStore
 
     public void Set(string key, string value)
     {
-        using FileStream fs = new(_fileProvider.GetFilePath(), FileMode.Append);
+        using FileStream fs = new(_fileProvider.GetWriteFilePath(), FileMode.Append);
         fs.Seek(0, SeekOrigin.End);
 
         byte[] keyBytes = System.Text.Encoding.UTF8.GetBytes(key);
@@ -74,7 +76,7 @@ public class IndexedTextStore : IKeyValueStore
             return;
         }
 
-        using FileStream fs = new(_fileProvider.GetFilePath(), FileMode.Append);
+        using FileStream fs = new(_fileProvider.GetWriteFilePath(), FileMode.Append);
         fs.Seek(0, SeekOrigin.End);
         
         byte[] keyBytes = System.Text.Encoding.UTF8.GetBytes(key);
@@ -95,7 +97,8 @@ public class IndexedTextStore : IKeyValueStore
     {
         _logger.LogInformation("Rebuilding Index");
         
-        using FileStream fs = new(_fileProvider.GetFilePath(), FileMode.Open, FileAccess.Read);
+        // TODO: build index from all files
+        using FileStream fs = new(_fileProvider.GetReadFilePaths()[0], FileMode.Open, FileAccess.Read);
         var isIndexing = true;
 
         while (isIndexing)

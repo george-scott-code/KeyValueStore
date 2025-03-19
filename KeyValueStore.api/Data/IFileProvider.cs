@@ -2,5 +2,6 @@ namespace KeyValueStore.api.Data;
 
 public interface IFileProvider
 {
-    public string GetFilePath();
+    public string[] GetReadFilePaths();
+    public string GetWriteFilePath();
 }

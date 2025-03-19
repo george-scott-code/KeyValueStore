@@ -25,7 +25,7 @@ public class FileProvider : IFileProvider
     }
 
     //TODO: we will have to support one file for writing and potential multiple files for reading
-    public string GetFilePath()
+    public string[] GetReadFilePaths()
     {
         if(!Directory.Exists(_dbPath))
         {
@@ -40,11 +40,15 @@ public class FileProvider : IFileProvider
             _logger.LogInformation($"Creating new database file. {filePath}");
             using FileStream _ = File.Create(filePath);
 
-            return filePath;
+            return [filePath];
         }
 
-        // TODO: return the latest
-        return files.OrderByDescending(static x => 
-            DateTime.ParseExact(x.Split('_')[^1].Split('.')[0], "yyyyMMddTHHmmss", null)).FirstOrDefault();
+        return [.. files.OrderByDescending(static x => 
+            DateTime.ParseExact(x.Split('_')[^1].Split('.')[0], "yyyyMMddTHHmmss", null))];
+    }
+
+    public string GetWriteFilePath()
+    {
+        return GetReadFilePaths()[0];
     }
 }

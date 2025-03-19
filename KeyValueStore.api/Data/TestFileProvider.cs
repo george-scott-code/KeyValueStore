@@ -21,7 +21,12 @@ public class TestFileProvider : IFileProvider
         }
     }
 
-    public string GetFilePath()
+    public string[] GetReadFilePaths()
+    {
+        return [$"{_dbPath}/{_dbName}.txt"];
+    }
+
+    public string GetWriteFilePath()
     {
         // when do we check file size?
         return $"{_dbPath}/{_dbName}.txt";
