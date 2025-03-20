@@ -30,7 +30,7 @@ public class IndexedTextStore : IKeyValueStore
         }
 
         // TODO: read from segmented file using fileName not full path
-        using FileStream fs = new(byteData.file, FileMode.Open, FileAccess.Read);
+        using FileStream fs = new(byteData.Segment, FileMode.Open, FileAccess.Read);
         fs.Seek(byteData.Offset, SeekOrigin.Begin);
         
         var byteBufffer = new byte[byteData.Length];
@@ -138,4 +138,4 @@ public class IndexedTextStore : IKeyValueStore
     }
 }
 
-public record ByteData(int Offset, int Length, string file);
+public record ByteData(int Offset, int Length, string Segment);
