@@ -43,12 +43,29 @@ public class FileProvider : IFileProvider
             return [filePath];
         }
 
-        return [.. files.OrderByDescending(static x => 
+        return [.. files.OrderBy(static x => 
             DateTime.ParseExact(x.Split('_')[^1].Split('.')[0], "yyyyMMddTHHmmss", null))];
     }
 
     public string GetWriteFilePath()
     {
-        return GetReadFilePaths()[0];
+        if(!Directory.Exists(_dbPath))
+        {
+            Directory.CreateDirectory(_dbPath);
+        }
+
+        var files = Directory.GetFiles(_dbPath, $"{_dbName}_*", SearchOption.TopDirectoryOnly);
+
+        if (files.Length == 0)
+        {
+            var filePath = $"{_dbPath}/{_dbName}_{DateTime.UtcNow:yyyyMMddTHHmmss}.db" ;
+            _logger.LogInformation($"Creating new database file. {filePath}");
+            using FileStream _ = File.Create(filePath);
+
+            return filePath;
+        }
+
+        return files.OrderByDescending(static x => 
+            DateTime.ParseExact(x.Split('_')[^1].Split('.')[0], "yyyyMMddTHHmmss", null)).FirstOrDefault();
     }
 }

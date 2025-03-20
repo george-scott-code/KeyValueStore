@@ -14,14 +14,12 @@ public class IndexedTextStore : IKeyValueStore
         _fileProvider = fileProvider;
         _logger = logger;
         
-        // TODO: segmented files
-        var filePath = _fileProvider.GetReadFilePaths();
-        using FileStream fs = new(filePath[0], FileMode.Open, FileAccess.Read);
-
-        if (fs.Length != 0)
+        var filePaths = _fileProvider.GetReadFilePaths();
+        
+        foreach (var filePath in filePaths)
         {
-            BuildIndex();
-        }
+            BuildIndex(filePath);
+        }        
     }
 
     public string Get(string key)
@@ -31,8 +29,8 @@ public class IndexedTextStore : IKeyValueStore
             return string.Empty;
         }
 
-        // TODO: read from segmented file
-        using FileStream fs = new(_fileProvider.GetReadFilePaths()[0], FileMode.Open, FileAccess.Read);
+        // TODO: read from segmented file using fileName not full path
+        using FileStream fs = new(byteData.file, FileMode.Open, FileAccess.Read);
         fs.Seek(byteData.Offset, SeekOrigin.Begin);
         
         var byteBufffer = new byte[byteData.Length];
@@ -43,7 +41,8 @@ public class IndexedTextStore : IKeyValueStore
 
     public void Set(string key, string value)
     {
-        using FileStream fs = new(_fileProvider.GetWriteFilePath(), FileMode.Append);
+        var filePath = _fileProvider.GetWriteFilePath();
+        using FileStream fs = new(filePath, FileMode.Append);
         fs.Seek(0, SeekOrigin.End);
 
         byte[] keyBytes = System.Text.Encoding.UTF8.GetBytes(key);
@@ -64,7 +63,7 @@ public class IndexedTextStore : IKeyValueStore
         fs.Write(valueBytes);
 
         // todo: ensure file size does not exceed 2gb
-        index[key] = new ByteData((int) offset, valueBytes.Length);
+        index[key] = new ByteData((int) offset, valueBytes.Length, filePath);
     }
 
     public void Remove(string key)
@@ -93,12 +92,12 @@ public class IndexedTextStore : IKeyValueStore
         index.Remove(key);
     }
 
-    public void BuildIndex()
+    public void BuildIndex(string filePath)
     {
         _logger.LogInformation("Rebuilding Index");
         
         // TODO: build index from all files
-        using FileStream fs = new(_fileProvider.GetReadFilePaths()[0], FileMode.Open, FileAccess.Read);
+        using FileStream fs = new(filePath, FileMode.Open, FileAccess.Read);
         var isIndexing = true;
 
         while (isIndexing)
@@ -133,10 +132,10 @@ public class IndexedTextStore : IKeyValueStore
                 var valueBytes = new byte[valueLength];
                 fs.ReadExactly(valueBytes, 0, valueLength);
                 
-                index[key] = new ByteData((int) offset + 8 + keyBytes.Length, valueBytes.Length);
+                index[key] = new ByteData((int) offset + 8 + keyBytes.Length, valueBytes.Length, filePath);
             }
         }
     }
 }
 
-public record ByteData(int Offset, int Length);
+public record ByteData(int Offset, int Length, string file);
