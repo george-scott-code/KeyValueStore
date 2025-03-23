@@ -29,8 +29,6 @@ public class FileProvider : IFileProvider
     //TODO: we will have to support one file for writing and potential multiple files for reading
     public string[] GetReadFilePaths()
     {
-
-
         var files = Directory.GetFiles(_dbPath, $"{_dbName}_*", SearchOption.TopDirectoryOnly);
 
         if (files.Length == 0)
@@ -57,7 +55,7 @@ public class FileProvider : IFileProvider
 
         if (files.Length == 0)
         {
-            var name = "{_dbName}_{DateTime.UtcNow:yyyyMMddTHHmmss}.db";
+            var name = $"{_dbName}_{DateTime.UtcNow:yyyyMMddTHHmmss}.db";
             var filePath = $"{_dbPath}/{name}";
             _logger.LogInformation($"Creating new database file. {filePath}");
             using FileStream _ = File.Create(filePath);
