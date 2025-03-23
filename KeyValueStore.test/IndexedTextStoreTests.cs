@@ -96,7 +96,7 @@ public class IndexedTextStoreTests
     public void WhenTheFileNeedsToBeReIndexed()
     {
         var store = new IndexedTextStore(
-            new TestFileProvider("D:\\source\\KeyValueStore\\Database\\Test", "db_no_index"), new NullLogger<IndexedTextStore>());
+            new TestFileProvider("D:\\source\\KeyValueStore\\Database\\Test", "db_no_index.txt"), new NullLogger<IndexedTextStore>());
 
         var result = store.Get("foo");
         Assert.Equal("bar", result);
@@ -108,7 +108,7 @@ public class IndexedTextStoreTests
     public void WhenTheFileNeedsToBeReIndexedWithDeletedKey()
     {
         var store = new IndexedTextStore(
-            new TestFileProvider("D:\\source\\KeyValueStore\\Database\\Test", "db_no_index_delete"), new NullLogger<IndexedTextStore>());
+            new TestFileProvider("D:\\source\\KeyValueStore\\Database\\Test", "db_no_index_delete.txt"), new NullLogger<IndexedTextStore>());
 
         var result = store.Get("foo");
         Assert.Equal("bar", result);

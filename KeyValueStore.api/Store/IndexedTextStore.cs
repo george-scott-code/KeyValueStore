@@ -30,7 +30,8 @@ public class IndexedTextStore : IKeyValueStore
         }
 
         // TODO: read from segmented file using fileName not full path
-        using FileStream fs = new(byteData.Segment, FileMode.Open, FileAccess.Read);
+        var segmentPath = $"{_fileProvider.DbPath()}/{byteData.Segment}";
+        using FileStream fs = new(segmentPath, FileMode.Open, FileAccess.Read);
         fs.Seek(byteData.Offset, SeekOrigin.Begin);
         
         var byteBufffer = new byte[byteData.Length];
@@ -41,7 +42,9 @@ public class IndexedTextStore : IKeyValueStore
 
     public void Set(string key, string value)
     {
-        var filePath = _fileProvider.GetWriteFilePath();
+        Segment segment = _fileProvider.GetWriteFilePath();
+        var filePath = $"{segment.Path}/{segment.Name}";
+        
         using FileStream fs = new(filePath, FileMode.Append);
         fs.Seek(0, SeekOrigin.End);
 
@@ -63,7 +66,7 @@ public class IndexedTextStore : IKeyValueStore
         fs.Write(valueBytes);
 
         // todo: ensure file size does not exceed 2gb
-        index[key] = new ByteData((int) offset, valueBytes.Length, filePath);
+        index[key] = new ByteData((int) offset, valueBytes.Length, segment.Name);
     }
 
     public void Remove(string key)
@@ -74,8 +77,9 @@ public class IndexedTextStore : IKeyValueStore
         {
             return;
         }
+        Segment segment = _fileProvider.GetWriteFilePath();
 
-        using FileStream fs = new(_fileProvider.GetWriteFilePath(), FileMode.Append);
+        using FileStream fs = new($"{segment.Path}/{segment.Name}", FileMode.Append);
         fs.Seek(0, SeekOrigin.End);
         
         byte[] keyBytes = System.Text.Encoding.UTF8.GetBytes(key);
@@ -132,7 +136,8 @@ public class IndexedTextStore : IKeyValueStore
                 var valueBytes = new byte[valueLength];
                 fs.ReadExactly(valueBytes, 0, valueLength);
                 
-                index[key] = new ByteData((int) offset + 8 + keyBytes.Length, valueBytes.Length, filePath);
+                var segmentName = filePath.Substring(filePath.LastIndexOf('\\') + 1);
+                index[key] = new ByteData((int) offset + 8 + keyBytes.Length, valueBytes.Length, segmentName);
             }
         }
     }

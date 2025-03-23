@@ -24,13 +24,12 @@ public class FileProvider : IFileProvider
         }
     }
 
+    public string DbPath() => _dbPath;
+
     //TODO: we will have to support one file for writing and potential multiple files for reading
     public string[] GetReadFilePaths()
     {
-        if(!Directory.Exists(_dbPath))
-        {
-            Directory.CreateDirectory(_dbPath);
-        }
+
 
         var files = Directory.GetFiles(_dbPath, $"{_dbName}_*", SearchOption.TopDirectoryOnly);
 
@@ -47,7 +46,7 @@ public class FileProvider : IFileProvider
             DateTime.ParseExact(x.Split('_')[^1].Split('.')[0], "yyyyMMddTHHmmss", null))];
     }
 
-    public string GetWriteFilePath()
+    public Segment GetWriteFilePath()
     {
         if(!Directory.Exists(_dbPath))
         {
@@ -58,14 +57,19 @@ public class FileProvider : IFileProvider
 
         if (files.Length == 0)
         {
-            var filePath = $"{_dbPath}/{_dbName}_{DateTime.UtcNow:yyyyMMddTHHmmss}.db" ;
+            var name = "{_dbName}_{DateTime.UtcNow:yyyyMMddTHHmmss}.db";
+            var filePath = $"{_dbPath}/{name}";
             _logger.LogInformation($"Creating new database file. {filePath}");
             using FileStream _ = File.Create(filePath);
 
-            return filePath;
+            return new Segment(_dbPath, name);
         }
 
-        return files.OrderByDescending(static x => 
+        // TODO: fix this, null etc
+        var file = files.OrderByDescending(static x => 
             DateTime.ParseExact(x.Split('_')[^1].Split('.')[0], "yyyyMMddTHHmmss", null)).FirstOrDefault();
+        
+        int segmentIndex = file.LastIndexOf('\\');
+        return new Segment(file.Substring(0, segmentIndex), file.Substring(segmentIndex +1));
     }
 }
