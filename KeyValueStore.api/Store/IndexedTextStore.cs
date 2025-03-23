@@ -56,7 +56,6 @@ public class IndexedTextStore : IKeyValueStore
         fs.Write(keyLengthBytes);
         fs.Write(keyBytes);
 
-
         // todo: consider max length
         byte[] valueLengthBytes = new byte[4];
         BinaryPrimitives.WriteInt32BigEndian(valueLengthBytes, valueBytes.Length);
@@ -136,7 +135,7 @@ public class IndexedTextStore : IKeyValueStore
                 var valueBytes = new byte[valueLength];
                 fs.ReadExactly(valueBytes, 0, valueLength);
                 
-                var segmentName = filePath.Substring(filePath.LastIndexOf('\\') + 1);
+                var segmentName = filePath[(filePath.LastIndexOf('\\') + 1)..];
                 index[key] = new ByteData((int) offset + 8 + keyBytes.Length, valueBytes.Length, segmentName);
             }
         }

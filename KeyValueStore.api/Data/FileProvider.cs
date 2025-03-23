@@ -70,6 +70,6 @@ public class FileProvider : IFileProvider
             DateTime.ParseExact(x.Split('_')[^1].Split('.')[0], "yyyyMMddTHHmmss", null)).FirstOrDefault();
         
         int segmentIndex = file.LastIndexOf('\\');
-        return new Segment(file.Substring(0, segmentIndex), file.Substring(segmentIndex +1));
+        return new Segment(file[..segmentIndex], file.Substring(segmentIndex +1));
     }
 }
