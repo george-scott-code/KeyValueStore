@@ -130,4 +130,29 @@ public class IndexedTextStoreTests
         var result2 = store.Get("hello");
         Assert.Equal("world", result2);
     }
+
+    [Fact]
+    public void AddingKVP_WhenTheCurrentSegmentIsFull()
+    {
+        // this assumes the file limit is 1kb, will be required when config is added
+        var provider = new FileProvider(new NullLogger<FileProvider>(), "D:\\source\\KeyValueStore\\Database\\Segmentation", "db");
+        var store = new IndexedTextStore(provider, new NullLogger<IndexedTextStore>()); 
+        
+        var paths = provider.GetReadFilePaths();
+
+        Assert.Single(paths);
+
+        var result = store.Get("Test file segmentation");
+        Assert.Equal("Test file segmentation", result);
+
+        store.Set("Test file segmentation", "Test file added");
+
+        paths = provider.GetReadFilePaths();
+        Assert.Equal(2, paths.Length);
+
+        result = store.Get("Test file segmentation");
+        Assert.Equal("Test file added", result);
+
+        // cleanup new file
+    }
 }

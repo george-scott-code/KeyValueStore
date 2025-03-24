@@ -1,12 +1,10 @@
-using Microsoft.Extensions.Logging;
-
 namespace KeyValueStore.api.Data;
 
 public class FileProvider : IFileProvider
 {
     private static string _dbPath = "D:\\source\\KeyValueStore\\Database\\Main";
     private static string _dbName = "db";
-
+    private readonly long MAX_SEGMENT_SIZE = 1000;
     ILogger<FileProvider> _logger;
 
     // todo: inject configuration
@@ -26,7 +24,6 @@ public class FileProvider : IFileProvider
 
     public string DbPath() => _dbPath;
 
-    //TODO: we will have to support one file for writing and potential multiple files for reading
     public string[] GetReadFilePaths()
     {
         var files = Directory.GetFiles(_dbPath, $"{_dbName}_*", SearchOption.TopDirectoryOnly);
@@ -55,19 +52,30 @@ public class FileProvider : IFileProvider
 
         if (files.Length == 0)
         {
-            var name = $"{_dbName}_{DateTime.UtcNow:yyyyMMddTHHmmss}.db";
-            var filePath = $"{_dbPath}/{name}";
-            _logger.LogInformation($"Creating new database file. {filePath}");
-            using FileStream _ = File.Create(filePath);
-
-            return new Segment(_dbPath, name);
+            return CreateNewSegment();
         }
 
-        // TODO: fix this, null etc
+        // TODO: fix this, null etc, can we use dir info and only consider correct format?
         var file = files.OrderByDescending(static x => 
             DateTime.ParseExact(x.Split('_')[^1].Split('.')[0], "yyyyMMddTHHmmss", null)).FirstOrDefault();
         
+        var fi = new FileInfo(file);
+        if(fi.Length > MAX_SEGMENT_SIZE)
+        {
+            return CreateNewSegment();
+        }
+
         int segmentIndex = file.LastIndexOf('\\');
         return new Segment(file[..segmentIndex], file.Substring(segmentIndex +1));
+    }
+
+    private Segment CreateNewSegment()
+    {
+        var name = $"{_dbName}_{DateTime.UtcNow:yyyyMMddTHHmmss}.db";
+        var filePath = $"{_dbPath}/{name}";
+        _logger.LogInformation($"Creating new database segment. {filePath}");
+        using FileStream _ = File.Create(filePath);
+
+        return new Segment(_dbPath, name);
     }
 }
