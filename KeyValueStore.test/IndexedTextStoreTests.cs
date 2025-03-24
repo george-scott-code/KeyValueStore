@@ -154,5 +154,7 @@ public class IndexedTextStoreTests
         Assert.Equal("Test file added", result);
 
         // cleanup new file
+        var newFile = paths[1];
+        File.Delete(newFile);
     }
 }
