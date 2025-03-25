@@ -2,35 +2,24 @@ namespace KeyValueStore.api.Data;
 
 public class FileProvider : IFileProvider
 {
-    private static string _dbPath = "D:\\source\\KeyValueStore\\Database\\Main";
-    private static string _dbName = "db";
-    private readonly long MAX_SEGMENT_SIZE = 1000;
-    ILogger<FileProvider> _logger;
+    private ILogger<FileProvider> _logger;
+    private Configuration _config;
 
-    // todo: inject configuration
-    public FileProvider(ILogger<FileProvider> logger, string? dbPath = null, string? dbName = null)
+    public FileProvider(ILogger<FileProvider> logger, Configuration config, string? dbPath = null, string? dbName = null)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
-        if(dbPath is not null)
-        {
-            _dbPath = dbPath;
-        }
-        if(dbName is not null)
-        {
-            _dbName = dbName;
-        }
+        _config = config ?? throw new ArgumentNullException(nameof(config));
     }
 
-    public string DbPath() => _dbPath;
+    public string DbPath() => _config.Path;
 
     public string[] GetReadFilePaths()
     {
-        var files = Directory.GetFiles(_dbPath, $"{_dbName}_*", SearchOption.TopDirectoryOnly);
+        var files = Directory.GetFiles(_config.Path, $"{_config.Name}_*", SearchOption.TopDirectoryOnly);
 
         if (files.Length == 0)
         {
-            var filePath = $"{_dbPath}/{_dbName}_{DateTime.UtcNow:yyyyMMddTHHmmss}.db" ;
+            var filePath = $"{_config.Path}/{_config.Name}_{DateTime.UtcNow:yyyyMMddTHHmmss}.db" ;
             _logger.LogInformation($"Creating new database file. {filePath}");
             using FileStream _ = File.Create(filePath);
 
@@ -43,12 +32,12 @@ public class FileProvider : IFileProvider
 
     public Segment GetWriteFilePath()
     {
-        if(!Directory.Exists(_dbPath))
+        if(!Directory.Exists(_config.Path))
         {
-            Directory.CreateDirectory(_dbPath);
+            Directory.CreateDirectory(_config.Path);
         }
 
-        var files = Directory.GetFiles(_dbPath, $"{_dbName}_*", SearchOption.TopDirectoryOnly);
+        var files = Directory.GetFiles(_config.Path, $"{_config.Name}_*", SearchOption.TopDirectoryOnly);
 
         if (files.Length == 0)
         {
@@ -60,7 +49,7 @@ public class FileProvider : IFileProvider
             DateTime.ParseExact(x.Split('_')[^1].Split('.')[0], "yyyyMMddTHHmmss", null)).FirstOrDefault();
         
         var fi = new FileInfo(file);
-        if(fi.Length > MAX_SEGMENT_SIZE)
+        if(fi.Length > _config.MaximumSegmentSize)
         {
             return CreateNewSegment();
         }
@@ -71,11 +60,11 @@ public class FileProvider : IFileProvider
 
     private Segment CreateNewSegment()
     {
-        var name = $"{_dbName}_{DateTime.UtcNow:yyyyMMddTHHmmss}.db";
-        var filePath = $"{_dbPath}/{name}";
+        var name = $"{_config.Name}_{DateTime.UtcNow:yyyyMMddTHHmmss}.db";
+        var filePath = $"{_config.Path}/{name}";
         _logger.LogInformation($"Creating new database segment. {filePath}");
         using FileStream _ = File.Create(filePath);
 
-        return new Segment(_dbPath, name);
+        return new Segment(_config.Path, name);
     }
 }

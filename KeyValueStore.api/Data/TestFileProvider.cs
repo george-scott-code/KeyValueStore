@@ -5,12 +5,12 @@ public class TestFileProvider : IFileProvider
     private readonly string _dbName = "db.txt";
     private readonly string _dbPath = "D:\\source\\KeyValueStore\\Database\\Test";
 
-    public TestFileProvider(string? dbPath = null, string? dbName = null)
+    public TestFileProvider(Configuration? configuration = null)
     {
-        if(dbPath != null && dbName != null)
+        if(configuration != null)
         {
-            _dbPath = dbPath;
-            _dbName = dbName;
+            _dbPath = configuration.Path;
+            _dbName = configuration.Name;
         }
         else
         {

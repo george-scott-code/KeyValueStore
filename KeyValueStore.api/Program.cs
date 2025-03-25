@@ -8,6 +8,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<IFileProvider, FileProvider>();
 builder.Services.AddSingleton<IndexedTextStore, IndexedTextStore>();
+builder.Services.AddSingleton<Configuration, Configuration>();
 
 var loggerFactory = LoggerFactory.Create(logging =>
 {

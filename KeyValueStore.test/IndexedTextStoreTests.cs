@@ -95,8 +95,14 @@ public class IndexedTextStoreTests
     [Fact]
     public void WhenTheFileNeedsToBeReIndexed()
     {
+        var config = new Configuration()
+        {
+            Path ="D:\\source\\KeyValueStore\\Database\\Test", 
+            Name = "db_no_index.txt"
+        };
+
         var store = new IndexedTextStore(
-            new TestFileProvider("D:\\source\\KeyValueStore\\Database\\Test", "db_no_index.txt"), new NullLogger<IndexedTextStore>());
+            new TestFileProvider(config), new NullLogger<IndexedTextStore>());
 
         var result = store.Get("foo");
         Assert.Equal("bar", result);
@@ -107,8 +113,14 @@ public class IndexedTextStoreTests
     [Fact]
     public void WhenTheFileNeedsToBeReIndexedWithDeletedKey()
     {
+        var config = new Configuration()
+        {
+            Path = "D:\\source\\KeyValueStore\\Database\\Test", 
+            Name = "db_no_index_delete.txt"
+        };
+        
         var store = new IndexedTextStore(
-            new TestFileProvider("D:\\source\\KeyValueStore\\Database\\Test", "db_no_index_delete.txt"), new NullLogger<IndexedTextStore>());
+            new TestFileProvider(config), new NullLogger<IndexedTextStore>());
 
         var result = store.Get("foo");
         Assert.Equal("bar", result);
@@ -121,8 +133,14 @@ public class IndexedTextStoreTests
     [Fact]
     public void ReIndexedTheStore_WhenThereAreTwoSegments()
     {
+        var config = new Configuration()
+        {
+            Path = "D:\\source\\KeyValueStore\\Database\\TestSegments",
+            Name = "db"
+        };
+
         var store = new IndexedTextStore(
-            new FileProvider(new NullLogger<FileProvider>(), "D:\\source\\KeyValueStore\\Database\\TestSegments", "db"), new NullLogger<IndexedTextStore>());
+            new FileProvider(new NullLogger<FileProvider>(), config), new NullLogger<IndexedTextStore>());
         
         var result = store.Get("segment");
         Assert.Equal("two", result);
@@ -135,7 +153,14 @@ public class IndexedTextStoreTests
     public void AddingKVP_WhenTheCurrentSegmentIsFull()
     {
         // this assumes the file limit is 1kb, will be required when config is added
-        var provider = new FileProvider(new NullLogger<FileProvider>(), "D:\\source\\KeyValueStore\\Database\\Segmentation", "db");
+        var config = new Configuration()
+        {
+            Path = "D:\\source\\KeyValueStore\\Database\\Segmentation",
+            Name = "db",
+            MaximumSegmentSize = 1000
+        };
+
+        var provider = new FileProvider(new NullLogger<FileProvider>(), config);
         var store = new IndexedTextStore(provider, new NullLogger<IndexedTextStore>()); 
         
         var paths = provider.GetReadFilePaths();
