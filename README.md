@@ -14,8 +14,8 @@ Roadmap:
 - Hash Map Index
 - crash recovery
 - deletion
-
 - Segmentation
+
 - concurrency
 - SST tables
 

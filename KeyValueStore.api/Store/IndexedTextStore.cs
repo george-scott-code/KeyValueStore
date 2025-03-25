@@ -29,7 +29,6 @@ public class IndexedTextStore : IKeyValueStore
             return string.Empty;
         }
 
-        // TODO: read from segmented file using fileName not full path
         var segmentPath = $"{_fileProvider.DbPath()}/{byteData.Segment}";
         using FileStream fs = new(segmentPath, FileMode.Open, FileAccess.Read);
         fs.Seek(byteData.Offset, SeekOrigin.Begin);
@@ -64,7 +63,6 @@ public class IndexedTextStore : IKeyValueStore
         var offset = fs.Position;
         fs.Write(valueBytes);
 
-        // todo: ensure file size does not exceed 2gb
         index[key] = new ByteData((int) offset, valueBytes.Length, segment.Name);
     }
 
@@ -99,7 +97,6 @@ public class IndexedTextStore : IKeyValueStore
     {
         _logger.LogInformation("Rebuilding Index");
         
-        // TODO: build index from all files
         using FileStream fs = new(filePath, FileMode.Open, FileAccess.Read);
         var isIndexing = true;
 

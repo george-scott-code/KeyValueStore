@@ -30,7 +30,6 @@ public class TestFileProvider : IFileProvider
 
     public Segment GetWriteFilePath()
     {
-        // when do we check file size?
         return new Segment(_dbPath, _dbName);
     }
 }
