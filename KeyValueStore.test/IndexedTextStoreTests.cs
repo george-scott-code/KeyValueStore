@@ -17,6 +17,19 @@ public class IndexedTextStoreTests
     }
 
     [Fact]
+    public void WhenTheKeyHasBeenSet_CalledMultipleTimes()
+    {
+        var store = new IndexedTextStore(new TestFileProvider(), new NullLogger<IndexedTextStore>());
+
+        for (int i = 0; i < 1000; i++)
+        {
+            store.Set($"Hello", $"World{i}");
+            var result = store.Get($"Hello");
+            Assert.Equal($"World{i}", result);
+        }
+    }
+
+    [Fact]
     public void WhenTheKeyHasNotBeenSet()
     {
         var store = new IndexedTextStore(new TestFileProvider(), new NullLogger<IndexedTextStore>());
@@ -92,6 +105,14 @@ public class IndexedTextStoreTests
         Assert.Equal("", result2);
     }
 
+    [Fact]
+    public void Delete_WhenTheKeyDoesNotExist()
+    {
+        var store = new IndexedTextStore(new TestFileProvider(), new NullLogger<IndexedTextStore>());
+        store.Remove("Hello");
+    }
+
+    // Indexing
     [Fact]
     public void WhenTheFileNeedsToBeReIndexed()
     {
