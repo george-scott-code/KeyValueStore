@@ -1,11 +1,12 @@
 using System.Buffers.Binary;
+using System.Collections.Concurrent;
 using KeyValueStore.api.Data;
 
 namespace KeyValueStore.api.Store;
 
 public class IndexedTextStore : IKeyValueStore
 {
-    private readonly Dictionary<string, ByteData> index = [];
+    private readonly ConcurrentDictionary<string, ByteData> index = [];
     private readonly IFileProvider _fileProvider;
     private readonly ILogger<IndexedTextStore> _logger;
 
@@ -90,7 +91,7 @@ public class IndexedTextStore : IKeyValueStore
         BinaryPrimitives.WriteInt32BigEndian(valueLengthBytes, 0);
         fs.Write(valueLengthBytes);
 
-        index.Remove(key);
+        index.Remove(key, out _);
     }
 
     public void BuildIndex(string filePath)
@@ -125,7 +126,7 @@ public class IndexedTextStore : IKeyValueStore
 
             if (valueLength == 0) // KV removed
             {
-                index.Remove(key);
+                index.Remove(key, out _);
             }
             else
             {
