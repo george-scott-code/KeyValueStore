@@ -13,6 +13,18 @@ public class FileProvider : IFileProvider
 
     public string DbPath() => _config.Path;
 
+    public Segment GetCompactionFilePath()
+    {
+        // todo ensure the compaction cannot be re-indexed until required, consider separate folder?
+        // todo temp use of utcnow -1 year, bug waiting to happen
+        var name = $"{_config.Name}_{DateTime.UtcNow.AddYears(-1):yyyyMMddTHHmmss}.db";
+        var filePath = $"{_config.Path}/{name}";
+        _logger.LogInformation($"Creating new database compaction segment. {filePath}");
+        using FileStream _ = File.Create(filePath);
+
+        return new Segment(_config.Path, name);
+    }
+
     public string[] GetReadFilePaths()
     {
         var files = Directory.GetFiles(_config.Path, $"{_config.Name}_*", SearchOption.TopDirectoryOnly);

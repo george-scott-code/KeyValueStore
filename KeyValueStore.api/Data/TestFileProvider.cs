@@ -23,6 +23,16 @@ public class TestFileProvider : IFileProvider
 
     public string DbPath() => _dbPath;
 
+    public Segment GetCompactionFilePath()
+    {
+        var name = $"{_dbName}_{DateTime.UtcNow.AddYears(-1):yyyyMMddTHHmmss}.db";
+        var filePath = $"{_dbPath}/{name}";
+        //_logger.LogInformation($"Creating new database compaction segment. {filePath}");
+        using FileStream _ = File.Create(filePath);
+
+        return new Segment(_dbPath, name);
+    }
+
     public string[] GetReadFilePaths()
     {
         return [$"{_dbPath}\\{_dbName}"];

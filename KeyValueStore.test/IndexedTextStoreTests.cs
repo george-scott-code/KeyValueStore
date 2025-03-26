@@ -169,6 +169,30 @@ public class IndexedTextStoreTests
         var result2 = store.Get("hello");
         Assert.Equal("world", result2);
     }
+    
+    [Fact]
+    public void ReIndexedTheStore_WhenTheSegmentsAreCompacted()
+    {
+        var config = new Configuration()
+        {
+            Path = "D:\\source\\KeyValueStore\\Database\\TestSegmentCompaction",
+            Name = "db"
+        };
+
+        var store = new IndexedTextStore(
+            new FileProvider(new NullLogger<FileProvider>(), config), new NullLogger<IndexedTextStore>());
+        
+        // Should be called by a process or scenario
+        store.CompactSegments();
+
+        var result = store.Get("segment");
+        Assert.Equal("two", result);
+
+        var result2 = store.Get("hello");
+        Assert.Equal("Compacted++", result2);
+
+        //cleanup the compacted file
+    }
 
     [Fact]
     public void AddingKVP_WhenTheCurrentSegmentIsFull()

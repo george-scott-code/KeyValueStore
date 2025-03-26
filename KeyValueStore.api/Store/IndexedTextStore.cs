@@ -6,7 +6,7 @@ namespace KeyValueStore.api.Store;
 
 public class IndexedTextStore : IKeyValueStore
 {
-    private readonly ConcurrentDictionary<string, ByteData> index = [];
+    private ConcurrentDictionary<string, ByteData> index = [];
     private readonly IFileProvider _fileProvider;
     private readonly ILogger<IndexedTextStore> _logger;
 
@@ -62,7 +62,15 @@ public class IndexedTextStore : IKeyValueStore
         fs.Write(valueLengthBytes);
         
         var offset = fs.Position;
-        fs.Write(valueBytes);
+        try
+        {
+            fs.Write(valueBytes);
+        }
+        catch(Exception ex){
+            _logger.LogError(ex, "Error when writing KVP");
+        }
+
+        // can we verify?
 
         index[key] = new ByteData((int) offset, valueBytes.Length, segment.Name);
     }
@@ -137,6 +145,61 @@ public class IndexedTextStore : IKeyValueStore
                 index[key] = new ByteData((int) offset + 8 + keyBytes.Length, valueBytes.Length, segmentName);
             }
         }
+    }
+
+    public void CompactSegments()
+    {
+        Segment writeFile = _fileProvider.GetWriteFilePath(); // new writes
+        Segment compactionFile = _fileProvider.GetCompactionFilePath(); // writes for compacted semgents (there may have been more writes...) 
+        // TODO: its poissible we will need to create multiple compaction files...
+
+        var compactedIndex = new ConcurrentDictionary<string, ByteData>(); 
+
+        foreach(var kvp in index)
+        //.Where(v => v.Value.Segment != writeFile.Name))
+        {
+            if(kvp.Value.Segment == writeFile.Name)
+            {
+                compactedIndex[kvp.Key] = kvp.Value;
+            }
+            else
+            {
+                // if its not in the write file we can write it to a new file, then discard the segments that are nor writable, then switch the index
+                _logger.LogInformation($"Compacting File {kvp.Value.Segment}");
+
+                var filePath = $"{compactionFile.Path}/{compactionFile.Name}";
+                
+                using FileStream fs = new(filePath, FileMode.Append);
+                fs.Seek(0, SeekOrigin.End);
+
+                byte[] keyBytes = System.Text.Encoding.UTF8.GetBytes(kvp.Key);
+
+                // TODO: read the value
+                byte[] valueBytes = System.Text.Encoding.UTF8.GetBytes("Compacted++");
+
+                byte[] keyLengthBytes = new byte[4];
+                BinaryPrimitives.WriteInt32BigEndian(keyLengthBytes, keyBytes.Length);
+                fs.Write(keyLengthBytes);
+                fs.Write(keyBytes);
+
+                // todo: consider max length
+                byte[] valueLengthBytes = new byte[4];
+                BinaryPrimitives.WriteInt32BigEndian(valueLengthBytes, valueBytes.Length);
+                fs.Write(valueLengthBytes);
+                
+                var offset = fs.Position;
+                try
+                {
+                    fs.Write(valueBytes);
+                }
+                catch(Exception ex){
+                    _logger.LogError(ex, "Error when writing KVP");
+                }
+                compactedIndex[kvp.Key] = new ByteData((int) offset, valueBytes.Length, compactionFile.Name);
+            }
+        }
+        // we need to unpdate the index in one shot when all files are compacted
+        index = compactedIndex;
     }
 }
 
