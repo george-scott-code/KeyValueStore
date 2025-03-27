@@ -194,9 +194,12 @@ public class IndexedTextStoreTests
         var result2 = store.Get("hello");
         Assert.Equal("world", result2);
 
-        //cleanup the compacted file        
-        var newFile = paths[0];
-        File.Delete(newFile);
+        // cleanup the compacted file
+        // store.CleanupCompactedFiles();
+        // before we can run this ^ we need file genration for the tests, so we can delete them
+        paths = provider.GetReadFilePaths();
+        //Assert.Equal(2, paths.Length);
+        File.Delete(paths[0]);
     }
 
     [Fact]

@@ -147,12 +147,13 @@ public class IndexedTextStore : IKeyValueStore
         }
     }
 
+    // TODO: make sure this does not conflict with any get/set requests in progress
     public void CompactSegments()
     {
         Segment writeFile = _fileProvider.GetWriteFilePath(); // new writes
         Segment compactionFile = _fileProvider.GetCompactionFilePath(); // writes for compacted semgents (there may have been more writes...) 
-        // TODO: its poissible we will need to create multiple compaction files...
-
+        
+        // TODO: its possible we will need to create multiple compaction files...
         var compactedIndex = new ConcurrentDictionary<string, ByteData>(); 
 
         foreach(var kvp in index)
@@ -163,7 +164,8 @@ public class IndexedTextStore : IKeyValueStore
             }
             else
             {
-                // if its not in the write file we can write it to a new file, then discard the segments that are nor writable, then switch the index
+                // if its not in the write file we can write it to a new file
+                // then discard the segments that are nor writable, then switch the index
                 _logger.LogInformation(message: $"Compacting File {kvp.Value.Segment}");
 
                 var filePath = $"{compactionFile.Path}/{compactionFile.Name}";
@@ -198,9 +200,25 @@ public class IndexedTextStore : IKeyValueStore
                 compactedIndex[kvp.Key] = new ByteData((int) offset, valueBytes.Length, compactionFile.Name);
             }
         }
-        // we need to unpdate the index in one shot when all files are compacted
+        // we need to update the index in one shot when all files are compacted
         index = compactedIndex;
     }
+    
+    // delete unreferenced files, this could happen independently
+    public void CleanupCompactedFiles()
+    {
+        string[] readFiles = _fileProvider.GetReadFilePaths();
+
+        var indexedFiles = index.Values.Select(x => $"{_fileProvider.DbPath()}\\{x.Segment}").ToArray();
+
+        var unreferencedFiles = readFiles.Where(x => !indexedFiles.Contains(x)).ToArray();
+
+        foreach (string file in unreferencedFiles)
+        {
+            File.Delete(file);
+        }
+    }
 }
+    
 
 public record ByteData(int Offset, int Length, string Segment);
