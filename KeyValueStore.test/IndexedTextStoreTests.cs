@@ -179,11 +179,14 @@ public class IndexedTextStoreTests
             Name = "db"
         };
 
-        var store = new IndexedTextStore(
-            new FileProvider(new NullLogger<FileProvider>(), config), new NullLogger<IndexedTextStore>());
-        
+        var provider =new FileProvider(new NullLogger<FileProvider>(), config);
+        var store = new IndexedTextStore(provider, new NullLogger<IndexedTextStore>());
+            
         // Should be called by a process or scenario
         store.CompactSegments();
+        
+        var paths = provider.GetReadFilePaths();
+        Assert.Equal(3, paths.Count());
 
         var result = store.Get("segment");
         Assert.Equal("two", result);
@@ -191,7 +194,9 @@ public class IndexedTextStoreTests
         var result2 = store.Get("hello");
         Assert.Equal("Compacted++", result2);
 
-        //cleanup the compacted file
+        //cleanup the compacted file        
+        var newFile = paths[0];
+        File.Delete(newFile);
     }
 
     [Fact]
