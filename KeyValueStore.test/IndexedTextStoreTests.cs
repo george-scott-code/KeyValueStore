@@ -192,7 +192,7 @@ public class IndexedTextStoreTests
         Assert.Equal("two", result);
 
         var result2 = store.Get("hello");
-        Assert.Equal("Compacted++", result2);
+        Assert.Equal("world", result2);
 
         //cleanup the compacted file        
         var newFile = paths[0];

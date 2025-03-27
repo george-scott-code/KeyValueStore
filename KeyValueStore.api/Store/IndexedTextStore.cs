@@ -156,7 +156,6 @@ public class IndexedTextStore : IKeyValueStore
         var compactedIndex = new ConcurrentDictionary<string, ByteData>(); 
 
         foreach(var kvp in index)
-        //.Where(v => v.Value.Segment != writeFile.Name))
         {
             if(kvp.Value.Segment == writeFile.Name)
             {
@@ -165,7 +164,7 @@ public class IndexedTextStore : IKeyValueStore
             else
             {
                 // if its not in the write file we can write it to a new file, then discard the segments that are nor writable, then switch the index
-                _logger.LogInformation($"Compacting File {kvp.Value.Segment}");
+                _logger.LogInformation(message: $"Compacting File {kvp.Value.Segment}");
 
                 var filePath = $"{compactionFile.Path}/{compactionFile.Name}";
                 
@@ -174,8 +173,9 @@ public class IndexedTextStore : IKeyValueStore
 
                 byte[] keyBytes = System.Text.Encoding.UTF8.GetBytes(kvp.Key);
 
-                // TODO: read the value
-                byte[] valueBytes = System.Text.Encoding.UTF8.GetBytes("Compacted++");
+                // TODO: we can shorcut some of the code in get, as we already have the index...
+                var value = Get(kvp.Key);
+                byte[] valueBytes = System.Text.Encoding.UTF8.GetBytes(value);
 
                 byte[] keyLengthBytes = new byte[4];
                 BinaryPrimitives.WriteInt32BigEndian(keyLengthBytes, keyBytes.Length);
