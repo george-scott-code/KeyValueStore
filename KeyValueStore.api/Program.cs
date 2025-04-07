@@ -1,5 +1,5 @@
-using KeyValueStore.api.Data;
-using KeyValueStore.api.Store;
+using KeyValueStore.lib.Data;
+using KeyValueStore.lib.Store;
 
 var builder = WebApplication.CreateBuilder(args);
 

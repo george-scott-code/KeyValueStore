@@ -1,4 +1,4 @@
-using KeyValueStore.api.Store;
+using KeyValueStore.lib.Store;
 namespace KeyValueStore;
 
 public class KeyValueStoreTests

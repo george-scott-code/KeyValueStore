@@ -1,4 +1,4 @@
-namespace KeyValueStore.api.Store;
+namespace KeyValueStore.lib.Store;
 
 public interface IKeyValueStore
 {

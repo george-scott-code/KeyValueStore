@@ -1,5 +1,5 @@
-using KeyValueStore.api.Data;
-using KeyValueStore.api.Store;
+using KeyValueStore.lib.Data;
+using KeyValueStore.lib.Store;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace KeyValueStore.test;
@@ -196,7 +196,7 @@ public class IndexedTextStoreTests
 
         // cleanup the compacted file
         // store.CleanupCompactedFiles();
-        // before we can run this ^ we need file genration for the tests, so we can delete them
+        // before we can run this ^ we need file generation for the tests, so we can delete them
         paths = provider.GetReadFilePaths();
         //Assert.Equal(2, paths.Length);
         File.Delete(paths[0]);

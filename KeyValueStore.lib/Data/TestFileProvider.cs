@@ -1,4 +1,7 @@
-namespace KeyValueStore.api.Data;
+using System;
+using System.IO;
+
+namespace KeyValueStore.lib.Data;
 
 public class TestFileProvider : IFileProvider
 {

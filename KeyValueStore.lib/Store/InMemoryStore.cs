@@ -1,4 +1,6 @@
-namespace KeyValueStore.api.Store;
+using System.Collections.Generic;
+
+namespace KeyValueStore.lib.Store;
 
 public class InMemoryStore : IKeyValueStore
 {

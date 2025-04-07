@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\KeyValueStore.api\KeyValueStore.api.csproj" />
+    <ProjectReference Include="..\KeyValueStore.lib\KeyValueStore.lib.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,8 +1,13 @@
+using System;
 using System.Buffers.Binary;
 using System.Collections.Concurrent;
-using KeyValueStore.api.Data;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using KeyValueStore.lib.Data;
+using Microsoft.Extensions.Logging;
 
-namespace KeyValueStore.api.Store;
+namespace KeyValueStore.lib.Store;
 
 public class IndexedTextStore : IKeyValueStore
 {

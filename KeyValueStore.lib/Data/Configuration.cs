@@ -1,4 +1,4 @@
-namespace KeyValueStore.api.Data;
+namespace KeyValueStore.lib.Data;
 
 public record Configuration
 {
