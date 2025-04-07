@@ -215,7 +215,6 @@ public class IndexedTextStore : IKeyValueStore
         string[] readFiles = _fileProvider.GetReadFilePaths();
 
         var indexedFiles = index.Values.Select(x => $"{_fileProvider.DbPath()}\\{x.Segment}").ToArray();
-
         var unreferencedFiles = readFiles.Where(x => !indexedFiles.Contains(x)).ToArray();
 
         foreach (string file in unreferencedFiles)

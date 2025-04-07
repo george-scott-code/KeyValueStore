@@ -4,12 +4,7 @@ namespace KeyValueStore.lib.Store;
 
 public class InMemoryStore : IKeyValueStore
 {
-    private static readonly Dictionary<string, string> _store;
-
-    static InMemoryStore()
-    {
-        _store = new Dictionary<string, string>();
-    }
+    private static readonly Dictionary<string, string> _store = [];
 
     public void Set(string key, string value)
     {

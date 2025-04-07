@@ -179,14 +179,14 @@ public class IndexedTextStoreTests
             Name = "db"
         };
 
-        var provider =new FileProvider(new NullLogger<FileProvider>(), config);
+        var provider = new FileProvider(new NullLogger<FileProvider>(), config);
         var store = new IndexedTextStore(provider, new NullLogger<IndexedTextStore>());
             
         // Should be called by a process or scenario
         store.CompactSegments();
         
         var paths = provider.GetReadFilePaths();
-        Assert.Equal(3, paths.Count());
+        Assert.Equal(3, paths.Length);
 
         var result = store.Get("segment");
         Assert.Equal("two", result);
@@ -196,7 +196,7 @@ public class IndexedTextStoreTests
 
         // cleanup the compacted file
         // store.CleanupCompactedFiles();
-        // before we can run this ^ we need file generation for the tests, so we can delete them
+        // TODO: before we can run this ^ we need file generation for the tests, so we can delete them
         paths = provider.GetReadFilePaths();
         //Assert.Equal(2, paths.Length);
         File.Delete(paths[0]);
@@ -205,7 +205,6 @@ public class IndexedTextStoreTests
     [Fact]
     public void AddingKVP_WhenTheCurrentSegmentIsFull()
     {
-        // this assumes the file limit is 1kb, will be required when config is added
         var config = new Configuration()
         {
             Path = "D:\\source\\KeyValueStore\\Database\\Segmentation",
